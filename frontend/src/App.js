@@ -5,7 +5,7 @@ import Signup from './components/Auth/Signup';
 import Home from './components/Auth/Home'; // Ensure correct path to Home.js
 import NotFound from './components/Auth/NotFound'; // Ensure correct path to NotFound.js
 import UserCreationForm from './components/Auth/UserCreationForm';
-import UserLogin from './components/Auth/UserLogin';
+import LoginForm from './components/Auth/LoginForm';
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/" element={<Home />} />
             <Route path="/create-user" element={<UserCreationForm />} />
-            <Route path="/userlogin" element={<UserLogin />} />
+            <Route path="/userlogin" element={<LoginForm />} />
             <Route path="*" element={<NotFound />} /> {/* Handle unknown routes */}
           </Routes>
         </div>

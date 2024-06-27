@@ -7,7 +7,7 @@ import rateLimit from 'express-rate-limit';
 import morgan from 'morgan';
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
-import userRoutes from './routes/userRoutes.js'; // Add this line
+import userAuthRoutes from './routes/userAuthRoutes.js'; // Add this line
 
 dotenv.config();
 const app = express();
@@ -27,7 +27,7 @@ connectDB().then(() => {
 
   app.use('/api/auth', authRoutes);
   app.use('/api/admin', adminRoutes);
-  app.use('/api/users', userRoutes); // Add this line
+  app.use('/api/users', userAuthRoutes); // Add this line
 
   const PORT = process.env.PORT || 5000;
 

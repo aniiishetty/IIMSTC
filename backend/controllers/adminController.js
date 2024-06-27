@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
-import User from '../models/User.js';
+import User from '../models/CreateUser.js';
+import CreateUser from '../models/CreateUser.js';
 
 const generateUserId = (firstName, dateOfBirth) => {
   const namePart = firstName.toLowerCase(); // Convert first name to lowercase
@@ -24,7 +25,7 @@ export const createUser = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
-    const newUser = new User({
+    const newUser = new CreateUser({
       userId,
       firstName,
       lastName,
