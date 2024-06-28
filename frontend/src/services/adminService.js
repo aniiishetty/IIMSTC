@@ -11,4 +11,13 @@ const createUser = async (firstName, lastName, dateOfBirth) => {
   }
 };
 
-export { createUser };
+const createFaculty = async (firstName, lastName, dateOfBirth) => {
+  try {
+    const response = await axios.post(`${API_URL}/create-faculty`, { firstName, lastName, dateOfBirth });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export { createUser, createFaculty };

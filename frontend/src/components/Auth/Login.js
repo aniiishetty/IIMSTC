@@ -17,7 +17,7 @@ const Login = () => {
     try {
       const data = await login(username, password);
       setAuth(data.token);
-      navigate('/create-user', { replace: true }); // Navigate to Home page after successful login
+      navigate('/admin-dashboard', { replace: true }); // Navigate to Home page after successful login
     } catch (err) {
       setError('Invalid credentials');
     }

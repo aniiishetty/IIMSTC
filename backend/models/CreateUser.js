@@ -1,4 +1,4 @@
-// models/User.js
+// models/CreateUser.js
 import mongoose from 'mongoose';
 
 const CreateUserSchema = new mongoose.Schema({

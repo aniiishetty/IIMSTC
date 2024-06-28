@@ -1,8 +1,6 @@
-// controllers/userAuthController.js
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/CreateUser.js';
-import ActiveSession from '../models/ActiveSession.js'; // Import ActiveSession model
 
 const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, {
@@ -31,14 +29,7 @@ export const loginUser = async (req, res) => {
     // Generate JWT token
     const token = generateToken(userId);
 
-    // Save session in activeSessions collection
-    const activeSession = new ActiveSession({
-      userId,
-      token,
-    });
-
-    await activeSession.save();
-
+    // Return the token (or any other relevant data) to indicate successful login
     res.json({ msg: 'Login successful', token });
 
   } catch (error) {
