@@ -17,7 +17,7 @@ const LoginForm = () => {
       console.log(response); // Handle success (e.g., store token)
 
       // Navigate to '/' after successful login
-      navigate('/');
+      navigate('/user-test');
     } catch (error) {
       setError('Invalid credentials. Please try again.'); // Handle error
     }

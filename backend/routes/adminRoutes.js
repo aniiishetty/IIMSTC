@@ -1,8 +1,7 @@
 // adminRoutes.js
 
 import express from 'express';
-import { createUser } from '../controllers/adminController.js';
-import { createFaculty } from '../controllers/adminController.js'; // Import createFaculty from adminService
+import { createUser, createFaculty } from '../controllers/adminController.js';
 
 const router = express.Router();
 

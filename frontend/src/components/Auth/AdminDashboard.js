@@ -4,23 +4,31 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FaCopy } from 'react-icons/fa';
 
 const AdminDashboard = () => {
+  // State for user creation form
   const [userData, setUserData] = useState({
     firstName: '',
     lastName: '',
     dateOfBirth: '',
   });
 
+  // State for faculty creation form
   const [facultyData, setFacultyData] = useState({
     firstName: '',
     lastName: '',
     dateOfBirth: '',
   });
 
+  // State to manage responses from API calls
   const [userResponse, setUserResponse] = useState(null);
   const [facultyResponse, setFacultyResponse] = useState(null);
-  const [copied, setCopied] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true); // State for toggling sidebar visibility
 
+  // State for copy button status
+  const [copied, setCopied] = useState(false);
+
+  // State to manage sidebar visibility
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  // Handle input change for user creation form
   const handleUserChange = (e) => {
     setUserData({
       ...userData,
@@ -28,6 +36,7 @@ const AdminDashboard = () => {
     });
   };
 
+  // Handle input change for faculty creation form
   const handleFacultyChange = (e) => {
     setFacultyData({
       ...facultyData,
@@ -35,38 +44,42 @@ const AdminDashboard = () => {
     });
   };
 
+  // Handle submission of user creation form
   const handleUserSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await createUser(userData.firstName, userData.lastName, userData.dateOfBirth);
       setUserResponse(response);
     } catch (error) {
-      console.error(error);
+      console.error('Error creating user:', error);
     }
   };
 
+  // Handle submission of faculty creation form
   const handleFacultySubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await createFaculty(facultyData.firstName, facultyData.lastName, facultyData.dateOfBirth);
       setFacultyResponse(response);
     } catch (error) {
-      console.error(error);
+      console.error('Error creating faculty:', error);
     }
   };
 
+  // Toggle sidebar visibility
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  // Styles for layout and components
   const panelStyle = {
     display: 'flex',
     flexDirection: 'row',
-    position: 'relative', // Added position relative for proper icon placement
+    position: 'relative',
   };
 
   const sidebarStyle = {
-    width: sidebarOpen ? '20%' : '5%', // Adjust width based on sidebarOpen state
+    width: sidebarOpen ? '20%' : '5%',
     height: '100vh',
     backgroundColor: '#f0f0f0',
     padding: '20px',
@@ -80,7 +93,7 @@ const AdminDashboard = () => {
     cursor: 'pointer',
     position: 'absolute',
     top: '20px',
-    right: sidebarOpen ? 'calc(20% - 20px)' : 'calc(5% - 20px)', // Adjust based on sidebarOpen state
+    right: sidebarOpen ? 'calc(20% - 20px)' : 'calc(5% - 20px)',
     transition: 'right 0.3s ease',
   };
 
@@ -94,7 +107,7 @@ const AdminDashboard = () => {
     cursor: 'pointer',
     transition: 'background-color 0.3s ease',
     textAlign: 'center',
-    fontSize: sidebarOpen ? '14px' : '12px', // Adjust font size based on sidebarOpen state
+    fontSize: sidebarOpen ? '14px' : '12px',
   };
 
   const activeOptionStyle = {
@@ -103,7 +116,7 @@ const AdminDashboard = () => {
   };
 
   const contentStyle = {
-    width: sidebarOpen ? '80%' : '95%', // Adjust width based on sidebarOpen state
+    width: sidebarOpen ? '80%' : '95%',
     padding: '20px',
     transition: 'width 0.3s ease',
   };
@@ -132,163 +145,127 @@ const AdminDashboard = () => {
     borderRadius: '5px',
     cursor: 'pointer',
     transition: 'background-color 0.3s ease',
-    width: '100%',
-  };
-
-  const buttonHoverStyle = {
-    backgroundColor: '#0056b3',
-  };
-
-  const messageStyle = {
     marginTop: '10px',
-    color: 'green',
   };
 
-  const errorStyle = {
-    marginTop: '10px',
-    color: 'red',
+  const buttonDisabledStyle = {
+    ...buttonStyle,
+    backgroundColor: '#ccc',
+    cursor: 'not-allowed',
   };
 
-  const copyStyle = {
-    cursor: 'pointer',
-    marginLeft: '5px',
-    color: 'blue',
-  };
+  // Handle active form selection
+  const [activeForm, setActiveForm] = useState('createUser');
 
   return (
     <div style={panelStyle}>
       <div style={sidebarStyle}>
-        <div
-          style={sidebarToggleStyle}
-          onClick={toggleSidebar}
-        >
-          ☰
+        {/* Sidebar toggle button */}
+        <div style={sidebarToggleStyle} onClick={toggleSidebar}>
+          {sidebarOpen ? '<' : '>'}
         </div>
-        <div
-          style={sidebarOpen ? activeOptionStyle : optionStyle}
-          onClick={() => setSidebarOpen(true)}
+        {/* Sidebar options */}
+        <button
+          style={activeForm === 'createUser' ? activeOptionStyle : optionStyle}
+          onClick={() => setActiveForm('createUser')}
         >
-          Create User
-        </div>
-        <div
-          style={!sidebarOpen ? activeOptionStyle : optionStyle}
-          onClick={() => setSidebarOpen(false)}
+          {sidebarOpen ? 'Create User' : 'User'}
+        </button>
+        <button
+          style={activeForm === 'createFaculty' ? activeOptionStyle : optionStyle}
+          onClick={() => setActiveForm('createFaculty')}
         >
-          Create Faculty
-        </div>
+          {sidebarOpen ? 'Create Faculty' : 'Faculty'}
+        </button>
       </div>
       <div style={contentStyle}>
-        {sidebarOpen && (
-          <div style={{ ...formStyle, width: 'calc(100% - 40px)' }}> {/* Adjusted width to fit content */}
+        {/* Form for creating users */}
+        {activeForm === 'createUser' && (
+          <form style={formStyle} onSubmit={handleUserSubmit}>
             <h2>Create User</h2>
-            <form onSubmit={handleUserSubmit}>
-              <div>
-                <label>First Name:</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={userData.firstName}
-                  onChange={handleUserChange}
-                  required
-                  style={inputStyle}
-                />
-              </div>
-              <div>
-                <label>Last Name:</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={userData.lastName}
-                  onChange={handleUserChange}
-                  required
-                  style={inputStyle}
-                />
-              </div>
-              <div>
-                <label>Date of Birth:</label>
-                <input
-                  type="date"
-                  name="dateOfBirth"
-                  value={userData.dateOfBirth}
-                  onChange={handleUserChange}
-                  required
-                  style={inputStyle}
-                />
-              </div>
-              <button
-                type="submit"
-                style={{ ...buttonStyle, width: '100%' }}
-                onMouseEnter={(e) => (e.target.style.backgroundColor = buttonHoverStyle.backgroundColor)}
-                onMouseLeave={(e) => (e.target.style.backgroundColor = buttonStyle.backgroundColor)}
-              >
-                Create User
-              </button>
-            </form>
+            <input
+              type="text"
+              name="firstName"
+              value={userData.firstName}
+              onChange={handleUserChange}
+              placeholder="First Name"
+              style={inputStyle}
+            />
+            <input
+              type="text"
+              name="lastName"
+              value={userData.lastName}
+              onChange={handleUserChange}
+              placeholder="Last Name"
+              style={inputStyle}
+            />
+            <input
+              type="date"
+              name="dateOfBirth"
+              value={userData.dateOfBirth}
+              onChange={handleUserChange}
+              placeholder="Date of Birth"
+              style={inputStyle}
+            />
+            <button type="submit" style={buttonStyle}>
+              Create User
+            </button>
             {userResponse && (
-              <p style={messageStyle}>
-                User Created: UserID: {userResponse.userId}, Password: {userResponse.password}
-                <CopyToClipboard text={`UserID: ${userResponse.userId}, Password: ${userResponse.password}`} onCopy={() => setCopied(true)}>
-                  <FaCopy style={copyStyle} title="Copy to clipboard" />
+              <div>
+                <p>Username: {userResponse.username}</p>
+                <p>Password: {userResponse.password}</p>
+                <CopyToClipboard text={userResponse.password} onCopy={() => setCopied(true)}>
+                  <button style={buttonStyle}>
+                    <FaCopy />
+                  </button>
                 </CopyToClipboard>
-              </p>
+              </div>
             )}
-          </div>
+          </form>
         )}
-        {!sidebarOpen && (
-          <div style={{ ...formStyle, width: 'calc(100% - 40px)' }}> {/* Adjusted width to fit content */}
+        {/* Form for creating faculty */}
+        {activeForm === 'createFaculty' && (
+          <form style={formStyle} onSubmit={handleFacultySubmit}>
             <h2>Create Faculty</h2>
-            <form onSubmit={handleFacultySubmit}>
-              <div>
-                <label>First Name:</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={facultyData.firstName}
-                  onChange={handleFacultyChange}
-                  required
-                  style={inputStyle}
-                />
-              </div>
-              <div>
-                <label>Last Name:</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={facultyData.lastName}
-                  onChange={handleFacultyChange}
-                  required
-                  style={inputStyle}
-                />
-              </div>
-              <div>
-                <label>Date of Birth:</label>
-                <input
-                  type="date"
-                  name="dateOfBirth"
-                  value={facultyData.dateOfBirth}
-                  onChange={handleFacultyChange}
-                  required
-                  style={inputStyle}
-                />
-              </div>
-              <button
-                type="submit"
-                style={{ ...buttonStyle, width: '100%' }}
-                onMouseEnter={(e) => (e.target.style.backgroundColor = buttonHoverStyle.backgroundColor)}
-                onMouseLeave={(e) => (e.target.style.backgroundColor = buttonStyle.backgroundColor)}
-              >
-                Create Faculty
-              </button>
-            </form>
+            <input
+              type="text"
+              name="firstName"
+              value={facultyData.firstName}
+              onChange={handleFacultyChange}
+              placeholder="First Name"
+              style={inputStyle}
+            />
+            <input
+              type="text"
+              name="lastName"
+              value={facultyData.lastName}
+              onChange={handleFacultyChange}
+              placeholder="Last Name"
+              style={inputStyle}
+            />
+            <input
+              type="date"
+              name="dateOfBirth"
+              value={facultyData.dateOfBirth}
+              onChange={handleFacultyChange}
+              placeholder="Date of Birth"
+              style={inputStyle}
+            />
+            <button type="submit" style={buttonStyle}>
+              Create Faculty
+            </button>
             {facultyResponse && (
-              <p style={messageStyle}>
-                Faculty Created: FacultyID: {facultyResponse.facultyId}, Password: {facultyResponse.password}
-                <CopyToClipboard text={`FacultyID: ${facultyResponse.facultyId}, Password: ${facultyResponse.password}`} onCopy={() => setCopied(true)}>
-                  <FaCopy style={copyStyle} title="Copy to clipboard" />
+              <div>
+                <p>Username: {facultyResponse.username}</p>
+                <p>Password: {facultyResponse.password}</p>
+                <CopyToClipboard text={facultyResponse.password} onCopy={() => setCopied(true)}>
+                  <button style={buttonStyle}>
+                    <FaCopy />
+                  </button>
                 </CopyToClipboard>
-              </p>
+              </div>
             )}
-          </div>
+          </form>
         )}
       </div>
     </div>

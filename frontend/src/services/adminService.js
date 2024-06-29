@@ -20,4 +20,6 @@ const createFaculty = async (firstName, lastName, dateOfBirth) => {
   }
 };
 
-export { createUser, createFaculty };
+
+
+export { createUser, createFaculty, createTest };
