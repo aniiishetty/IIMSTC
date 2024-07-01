@@ -1,275 +1,414 @@
-import React, { useState } from 'react';
-import { createUser, createFaculty } from '../../services/adminService'; // Adjust the path as necessary
+// components/AdminDashboard/AdminDashboard.js
+
+import React, { useState, useEffect } from 'react';
+import { createUser, createFaculty, createTest, uploadQuestions } from '../../services/adminService';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FaCopy } from 'react-icons/fa';
+import '../styles/AdminDashboard.css';
+
+
 
 const AdminDashboard = () => {
-  // State for user creation form
-  const [userData, setUserData] = useState({
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-  });
-
-  // State for faculty creation form
-  const [facultyData, setFacultyData] = useState({
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-  });
-
-  // State to manage responses from API calls
-  const [userResponse, setUserResponse] = useState(null);
-  const [facultyResponse, setFacultyResponse] = useState(null);
-
-  // State for copy button status
-  const [copied, setCopied] = useState(false);
-
-  // State to manage sidebar visibility
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-
-  // Handle input change for user creation form
-  const handleUserChange = (e) => {
-    setUserData({
-      ...userData,
-      [e.target.name]: e.target.value,
+    // State for user creation
+    const [userData, setUserData] = useState({
+        firstName: '',
+        lastName: '',
+        dateOfBirth: '',
     });
-  };
+    const [userResponse, setUserResponse] = useState(null); // Response from API
 
-  // Handle input change for faculty creation form
-  const handleFacultyChange = (e) => {
-    setFacultyData({
-      ...facultyData,
-      [e.target.name]: e.target.value,
+    // State for faculty creation
+    const [facultyData, setFacultyData] = useState({
+        firstName: '',
+        lastName: '',
+        dateOfBirth: '',
     });
-  };
+    const [facultyResponse, setFacultyResponse] = useState(null); // Response from API
 
-  // Handle submission of user creation form
-  const handleUserSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await createUser(userData.firstName, userData.lastName, userData.dateOfBirth);
-      setUserResponse(response);
-    } catch (error) {
-      console.error('Error creating user:', error);
-    }
-  };
+    const [copied, setCopied] = useState(false); // State for copy functionality
+    const [showCreateUser, setShowCreateUser] = useState(false); // State to manage visibility of create user form
+    const [showCreateFaculty, setShowCreateFaculty] = useState(false); // State to manage visibility of create faculty form
+    const [showCreateTest, setShowCreateTest] = useState(false); // State to manage visibility of create test form
 
-  // Handle submission of faculty creation form
-  const handleFacultySubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await createFaculty(facultyData.firstName, facultyData.lastName, facultyData.dateOfBirth);
-      setFacultyResponse(response);
-    } catch (error) {
-      console.error('Error creating faculty:', error);
-    }
-  };
+    const handleCreateUser = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await createUser(userData.firstName, userData.lastName, userData.dateOfBirth);
+            setUserResponse(response);
+        } catch (error) {
+            console.error('Error creating user:', error);
+        }
+    };
 
-  // Toggle sidebar visibility
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
+    const handleCreateFaculty = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await createFaculty(facultyData.firstName, facultyData.lastName, facultyData.dateOfBirth);
+            setFacultyResponse(response);
+        } catch (error) {
+            console.error('Error creating faculty:', error);
+        }
+    };
 
-  // Styles for layout and components
-  const panelStyle = {
-    display: 'flex',
-    flexDirection: 'row',
-    position: 'relative',
-  };
+    const [formData, setFormData] = useState({
+        title: '', // Ensure title is initialized in state
+        questions: [
+            { text: '', options: ['', '', '', ''], correctAnswer: 0 }
+        ],
+        noTabSwitch: false,
+        webcamAccess: false,
+        timeLimit: 0
+    });
+    const [testId, setTestId] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [questionsFile, setQuestionsFile] = useState(null); // State for CSV file upload
 
-  const sidebarStyle = {
-    width: sidebarOpen ? '20%' : '5%',
-    height: '100vh',
-    backgroundColor: '#f0f0f0',
-    padding: '20px',
-    borderRight: '1px solid #ccc',
-    transition: 'width 0.3s ease',
-    position: 'relative',
-  };
+    const handleChange = (e, qIndex, oIndex) => {
+        const { name, value, type, checked } = e.target;
+        setFormData(prevState => {
+            if (qIndex !== undefined) {
+                const questions = [...prevState.questions];
+                if (oIndex !== undefined) {
+                    questions[qIndex].options[oIndex] = value;
+                } else {
+                    questions[qIndex][name] = value;
+                }
+                return { ...prevState, questions };
+            }
+            return { ...prevState, [name]: type === 'checkbox' ? checked : value };
+        });
+    };
 
-  const sidebarToggleStyle = {
-    fontSize: '24px',
-    cursor: 'pointer',
-    position: 'absolute',
-    top: '20px',
-    right: sidebarOpen ? 'calc(20% - 20px)' : 'calc(5% - 20px)',
-    transition: 'right 0.3s ease',
-  };
+    const addQuestion = () => {
+        setFormData(prevState => ({
+            ...prevState,
+            questions: [
+                ...prevState.questions,
+                { text: '', options: ['', '', '', ''], correctAnswer: 0 }
+            ]
+        }));
+    };
 
-  const optionStyle = {
-    marginBottom: '10px',
-    padding: '10px',
-    backgroundColor: '#007bff',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
-    textAlign: 'center',
-    fontSize: sidebarOpen ? '14px' : '12px',
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            // Validate required fields
+            if (!formData.title || formData.questions.some(q => !q.text || q.options.some(opt => opt === '')) || formData.timeLimit <= 0) {
+                throw new Error('All fields (title, questions, noTabSwitch, webcamAccess, timeLimit) are required');
+            }
 
-  const activeOptionStyle = {
-    ...optionStyle,
-    backgroundColor: '#0056b3',
-  };
+            let formDataToSend = {
+                ...formData,
+                title: String(formData.title),
+                timeLimit: Number(formData.timeLimit),
+            };
 
-  const contentStyle = {
-    width: sidebarOpen ? '80%' : '95%',
-    padding: '20px',
-    transition: 'width 0.3s ease',
-  };
+            const response = await createTest(formDataToSend);
+            console.log('Test created successfully:', response);
+            setSuccessMessage('Test created successfully!');
+            setTestId(response.testId); // Assuming the response contains the testId
+            alert(`Test created successfully! Test ID: ${response.testId}`);
+        } catch (error) {
+            console.error('Error creating test:', error.message);
+        }
+    };
 
-  const formStyle = {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    padding: '20px',
-    borderRadius: '10px',
-    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-    marginBottom: '20px',
-  };
+    const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        setQuestionsFile(file);
+    };
 
-  const inputStyle = {
-    width: '100%',
-    padding: '10px',
-    margin: '10px 0',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-  };
+    const handleUploadQuestions = async () => {
+        if (!questionsFile || !formData.title) {
+            console.error('Both CSV file and title are required to upload questions.');
+            return;
+        }
 
-  const buttonStyle = {
-    padding: '10px 20px',
-    backgroundColor: '#007bff',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
-    marginTop: '10px',
-  };
+        try {
+            const formDataToSend = new FormData();
+            formDataToSend.append('questionsFile', questionsFile);
+            formDataToSend.append('title', formData.title); // Ensure title is included
 
-  const buttonDisabledStyle = {
-    ...buttonStyle,
-    backgroundColor: '#ccc',
-    cursor: 'not-allowed',
-  };
+            const response = await uploadQuestions(formDataToSend);
+            console.log('Questions uploaded successfully:', response);
+            // Handle success feedback or further actions if needed
+        } catch (error) {
+            console.error('Error uploading questions:', error);
+        }
+    };
 
-  // Handle active form selection
-  const [activeForm, setActiveForm] = useState('createUser');
+    // Styles and toggle function for sidebar
+    const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  return (
-    <div style={panelStyle}>
-      <div style={sidebarStyle}>
-        {/* Sidebar toggle button */}
-        <div style={sidebarToggleStyle} onClick={toggleSidebar}>
-          {sidebarOpen ? '<' : '>'}
+    const toggleSidebar = () => {
+        setSidebarOpen(!sidebarOpen);
+    };
+
+    useEffect(() => {
+        // Reset copied state after a certain duration or on certain actions
+        const timeout = setTimeout(() => {
+            setCopied(false);
+        }, 3000); // Reset after 3 seconds
+
+        return () => clearTimeout(timeout);
+    }, [copied]);
+
+    return (
+        <div style={{ display: 'flex' }}>
+            <div className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
+                {/* Sidebar toggle button */}
+                <div className="sidebar-toggle" onClick={toggleSidebar}>
+                    {sidebarOpen ? '<' : '>'}
+                </div>
+                {/* Sidebar options */}
+                <button
+                    className={`sidebar-option ${showCreateUser ? 'active' : ''}`}
+                    onClick={() => {
+                        setShowCreateUser(true);
+                        setShowCreateFaculty(false);
+                        setShowCreateTest(false);
+                    }}
+                >
+                    {sidebarOpen                         ? 'Create User' : 'User'}
+                </button>
+                <button
+                    className={`sidebar-option ${showCreateFaculty ? 'active' : ''}`}
+                    onClick={() => {
+                        setShowCreateFaculty(true);
+                        setShowCreateUser(false);
+                        setShowCreateTest(false);
+                    }}
+                >
+                    {sidebarOpen ? 'Create Faculty' : 'Faculty'}
+                </button>
+                <button
+                    className={`sidebar-option ${showCreateTest ? 'active' : ''}`}
+                    onClick={() => {
+                        setShowCreateTest(true);
+                        setShowCreateUser(false);
+                        setShowCreateFaculty(false);
+                    }}
+                >
+                    {sidebarOpen ? 'Create Test' : 'Test'}
+                </button>
+            </div>
+            <div className={`content ${sidebarOpen ? 'open' : 'closed'}`}>
+                {/* Create User Form */}
+                {showCreateUser && (
+                    <form className="form" onSubmit={handleCreateUser}>
+                        <h2>Create User</h2>
+                        <input
+                            type="text"
+                            name="firstName"
+                            value={userData.firstName}
+                            onChange={(e) =>
+                                setUserData({ ...userData, firstName: e.target.value })
+                            }
+                            placeholder="First Name"
+                            className="input"
+                        />
+                        <input
+                            type="text"
+                            name="lastName"
+                            value={userData.lastName}
+                            onChange={(e) =>
+                                setUserData({ ...userData, lastName: e.target.value })
+                            }
+                            placeholder="Last Name"
+                            className="input"
+                        />
+                        <input
+                            type="date"
+                            name="dateOfBirth"
+                            value={userData.dateOfBirth}
+                            onChange={(e) =>
+                                setUserData({ ...userData, dateOfBirth: e.target.value })
+                            }
+                            placeholder="Date of Birth"
+                            className="input"
+                        />
+                        <button type="submit" className="button">
+                            Create User
+                        </button>
+                        {userResponse && (
+                            <div>
+                                <p>Username: {userResponse.username}</p>
+                                <p>Password: {userResponse.password}</p>
+                                <CopyToClipboard
+                                    text={userResponse.password}
+                                    onCopy={() => setCopied(true)}
+                                >
+                                    <button className="button">
+                                        <FaCopy />
+                                    </button>
+                                </CopyToClipboard>
+                                {copied ? <span className="copied">Copied!</span> : null}
+                            </div>
+                        )}
+                    </form>
+                )}
+
+                {/* Create Faculty Form */}
+                {showCreateFaculty && (
+                    <form className="form" onSubmit={handleCreateFaculty}>
+                        <h2>Create Faculty</h2>
+                        <input
+                            type="text"
+                            name="firstName"
+                            value={facultyData.firstName}
+                            onChange={(e) =>
+                                setFacultyData({ ...facultyData, firstName: e.target.value })
+                            }
+                            placeholder="First Name"
+                            className="input"
+                        />
+                        <input
+                            type="text"
+                            name="lastName"
+                            value={facultyData.lastName}
+                            onChange={(e) =>
+                                setFacultyData({ ...facultyData, lastName: e.target.value })
+                            }
+                            placeholder="Last Name"
+                            className="input"
+                        />
+                        <input
+                            type="date"
+                            name="dateOfBirth"
+                            value={facultyData.dateOfBirth}
+                            onChange={(e) =>
+                                setFacultyData({ ...facultyData, dateOfBirth: e.target.value })
+                            }
+                            placeholder="Date of Birth"
+                            className="input"
+                        />
+                        <button type="submit" className="button">
+                            Create Faculty
+                        </button>
+                        {facultyResponse && (
+                            <div>
+                                <p>Username: {facultyResponse.username}</p>
+                                <p>Password: {facultyResponse.password}</p>
+                                <CopyToClipboard
+                                    text={facultyResponse.password}
+                                    onCopy={() => setCopied(true)}
+                                >
+                                    <button className="button">
+                                        <FaCopy />
+                                    </button>
+                                </CopyToClipboard>
+                                {copied ? <span className="copied">Copied!</span> : null}
+                            </div>
+                        )}
+                    </form>
+                )}
+
+                {/* Create Test Form */}
+                {showCreateTest && (
+                    <form className="form" onSubmit={handleSubmit}>
+                        <h2>Create Test</h2>
+                        <input
+                            type="text"
+                            name="title"
+                            value={formData.title}
+                            onChange={(e) => handleChange(e)}
+                            placeholder="Title"
+                            className="input"
+                        />
+                        {formData.questions.map((question, qIndex) => (
+                            <div key={qIndex} className="question-container">
+                                <input
+                                    type="text"
+                                    name="text"
+                                    value={question.text}
+                                    onChange={(e) => handleChange(e, qIndex)}
+                                    placeholder="Question"
+                                    className="input"
+                                />
+                                {question.options.map((option, oIndex) => (
+                                    <input
+                                        key={oIndex}
+                                        type="text"
+                                        value={option}
+                                        onChange={(e) => handleChange(e, qIndex, oIndex)}
+                                        placeholder={`Option ${oIndex + 1}`}
+                                        className="input"
+                                    />
+                                ))}
+                                <select
+                                    value={question.correctAnswer}
+                                    onChange={(e) => handleChange(e, qIndex)}
+                                    name="correctAnswer"
+                                    className="input"
+                                >
+                                    <option value="">Select Correct Answer</option>
+                                    {question.options.map((_, index) => (
+                                        <option key={index} value={index}>
+                                            Option {index + 1}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        ))}
+                        <button type="button" className="button" onClick={addQuestion}>
+                            Add Question
+                        </button>
+                        <label>
+                            No Tab Switch
+                            <input
+                                type="checkbox"
+                                name="noTabSwitch"
+                                checked={formData.noTabSwitch}
+                                onChange={(e) => handleChange(e)}
+                            />
+                        </label>
+                        <label>
+                            Webcam Access
+                            <input
+                                type="checkbox"
+                                name="webcamAccess"
+                                checked={formData.webcamAccess}
+                                onChange={(e) => handleChange(e)}
+                            />
+                        </label>
+                        <input
+                            type="number"
+                            name="timeLimit"
+                            value={formData.timeLimit}
+                            onChange={(e) => handleChange(e)}
+                            placeholder="Time Limit (in minutes)"
+                            className="input"
+                        />
+                        <input
+                            type="file"
+                            accept=".csv"
+                            onChange={handleFileUpload}
+                            className="input"
+                        />
+                        <button type="submit" className="button">
+                            Create Test
+                        </button>
+                        {successMessage && <p>{successMessage}</p>}
+                        {testId && (
+                            <div>
+                                <p>Test ID: {testId}</p>
+                                <CopyToClipboard
+                                    text={testId}
+                                    onCopy={() => setCopied(true)}
+                                >
+                                    <button className="button">
+                                        <FaCopy />
+                                    </button>
+                                </CopyToClipboard>
+                                {copied ? <span className="copied">Copied!</span> : null}
+                            </div>
+                        )}
+                    </form>
+                )}
+            </div>
         </div>
-        {/* Sidebar options */}
-        <button
-          style={activeForm === 'createUser' ? activeOptionStyle : optionStyle}
-          onClick={() => setActiveForm('createUser')}
-        >
-          {sidebarOpen ? 'Create User' : 'User'}
-        </button>
-        <button
-          style={activeForm === 'createFaculty' ? activeOptionStyle : optionStyle}
-          onClick={() => setActiveForm('createFaculty')}
-        >
-          {sidebarOpen ? 'Create Faculty' : 'Faculty'}
-        </button>
-      </div>
-      <div style={contentStyle}>
-        {/* Form for creating users */}
-        {activeForm === 'createUser' && (
-          <form style={formStyle} onSubmit={handleUserSubmit}>
-            <h2>Create User</h2>
-            <input
-              type="text"
-              name="firstName"
-              value={userData.firstName}
-              onChange={handleUserChange}
-              placeholder="First Name"
-              style={inputStyle}
-            />
-            <input
-              type="text"
-              name="lastName"
-              value={userData.lastName}
-              onChange={handleUserChange}
-              placeholder="Last Name"
-              style={inputStyle}
-            />
-            <input
-              type="date"
-              name="dateOfBirth"
-              value={userData.dateOfBirth}
-              onChange={handleUserChange}
-              placeholder="Date of Birth"
-              style={inputStyle}
-            />
-            <button type="submit" style={buttonStyle}>
-              Create User
-            </button>
-            {userResponse && (
-              <div>
-                <p>Username: {userResponse.username}</p>
-                <p>Password: {userResponse.password}</p>
-                <CopyToClipboard text={userResponse.password} onCopy={() => setCopied(true)}>
-                  <button style={buttonStyle}>
-                    <FaCopy />
-                  </button>
-                </CopyToClipboard>
-              </div>
-            )}
-          </form>
-        )}
-        {/* Form for creating faculty */}
-        {activeForm === 'createFaculty' && (
-          <form style={formStyle} onSubmit={handleFacultySubmit}>
-            <h2>Create Faculty</h2>
-            <input
-              type="text"
-              name="firstName"
-              value={facultyData.firstName}
-              onChange={handleFacultyChange}
-              placeholder="First Name"
-              style={inputStyle}
-            />
-            <input
-              type="text"
-              name="lastName"
-              value={facultyData.lastName}
-              onChange={handleFacultyChange}
-              placeholder="Last Name"
-              style={inputStyle}
-            />
-            <input
-              type="date"
-              name="dateOfBirth"
-              value={facultyData.dateOfBirth}
-              onChange={handleFacultyChange}
-              placeholder="Date of Birth"
-              style={inputStyle}
-            />
-            <button type="submit" style={buttonStyle}>
-              Create Faculty
-            </button>
-            {facultyResponse && (
-              <div>
-                <p>Username: {facultyResponse.username}</p>
-                <p>Password: {facultyResponse.password}</p>
-                <CopyToClipboard text={facultyResponse.password} onCopy={() => setCopied(true)}>
-                  <button style={buttonStyle}>
-                    <FaCopy />
-                  </button>
-                </CopyToClipboard>
-              </div>
-            )}
-          </form>
-        )}
-      </div>
-    </div>
-  );
+    );
 };
 
 export default AdminDashboard;
+

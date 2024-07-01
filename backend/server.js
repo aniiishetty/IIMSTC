@@ -8,7 +8,7 @@ import morgan from 'morgan';
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import userAuthRoutes from './routes/userAuthRoutes.js'; // Add this line
-
+import testRoutes from './routes/testRoutes.js';
 dotenv.config();
 const app = express();
 
@@ -28,7 +28,7 @@ connectDB().then(() => {
   app.use('/api/auth', authRoutes);
   app.use('/api/admin', adminRoutes);
   app.use('/api/users', userAuthRoutes); // Add this line
-  
+  app.use('/api/tests', testRoutes);
   const PORT = process.env.PORT || 5000;
 
   app.listen(PORT, () => {
