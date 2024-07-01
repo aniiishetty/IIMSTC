@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Webcam from 'react-webcam';
 import { getTestByTitle } from '../../services/testService';
-// import './styles/TestAttendingMode.css'; // Assuming you have a CSS file for styling
+import '../styles/test.css'; // Assuming your CSS file is named test.css
 
 const TestAttendingMode = () => {
   const [testTitle, setTestTitle] = useState('');
@@ -17,13 +17,8 @@ const TestAttendingMode = () => {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (test && test.noTabSwitch) {
-        setTabSwitchCount(tabSwitchCount + 1);
-        if (tabSwitchCount === 2) {
-          endTest();
-          showAlertMessage('Test ended due to multiple tab switches.');
-        } else if (tabSwitchCount === 1) {
-          showAlertMessage('You are not allowed to switch tabs during the test.');
-        }
+        setTabSwitchCount(prevCount => prevCount + 1);
+        console.log('Tab switch count:', tabSwitchCount + 1);
       }
     };
 
@@ -32,11 +27,22 @@ const TestAttendingMode = () => {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [tabSwitchCount, test]);
+  }, [test]);
+
+  useEffect(() => {
+    console.log('Tab switch count changed:', tabSwitchCount);
+    if (tabSwitchCount === 1) {
+      showAlertMessage('You are not allowed to switch tabs during the test.');
+    } else if (tabSwitchCount === 2) {
+      endTest();
+      showAlertMessage('Test ended due to multiple tab switches.');
+    }
+  }, [tabSwitchCount]);
 
   const handleTestAccess = async () => {
     try {
       const response = await getTestByTitle(testTitle);
+      console.log('Test accessed:', response);
       setTest(response);
       setAnswers(new Array(response.questions.length).fill(null));
       if (response.webcamAccess) {
@@ -46,6 +52,7 @@ const TestAttendingMode = () => {
       }
     } catch (error) {
       setError(error.message);
+      console.error('Error accessing test:', error);
     }
   };
 
@@ -58,42 +65,48 @@ const TestAttendingMode = () => {
     setAnswers([]);
   };
 
-  const showAlertMessage = (message) => {
+  const showAlertMessage = (message, isCorrect) => {
     setError(message);
     setShowAlert(true);
-    setTimeout(() => {
-      setShowAlert(false);
-      setError(null);
-    }, 5000);
+    const alertElement = document.querySelector('.test-alert');
+    if (alertElement) {
+      alertElement.classList.add(isCorrect? 'correct' : 'incorrect');
+      setTimeout(() => {
+        setShowAlert(false);
+        setError(null);
+        alertElement.classList.remove(isCorrect? 'correct' : 'incorrect');
+      }, 5000);
+    }
   };
 
   const handleOptionSelect = (questionIndex, optionIndex) => {
     if (!test.questions[questionIndex].answered) {
       const updatedAnswers = [...answers];
-      updatedAnswers[questionIndex] = optionIndex;
+      updatedAnswers[questionIndex] = optionIndex + 1; // Updated to start from 1
       setAnswers(updatedAnswers);
-  
-      const correctAnswerIndex = test.questions[questionIndex].correctAnswer;
-      const isCorrect = optionIndex === correctAnswerIndex;
-      const resultMessage = isCorrect ? 'Correct answer!' : 'Incorrect answer.';
-      
-      // Display alert for correct answer
-      if (isCorrect) {
-        showAlertMessage(resultMessage);
-      }
-      
-      const updatedTest = { ...test };
+
+      const correctAnswerIndex = parseInt(test.questions[questionIndex].correctAnswer, 10);
+      console.log('Correct Answer Index:', correctAnswerIndex, 'Selected Option Index:', optionIndex + 1);
+
+      const isCorrect = optionIndex + 1 === correctAnswerIndex;
+      const resultMessage = isCorrect? 'Correct answer!' : 'Incorrect answer.';
+
+      // Display alert for correct or incorrect answer
+      showAlertMessage(resultMessage, isCorrect);
+
+      const updatedTest = {...test };
       updatedTest.questions[questionIndex].answered = true;
-      updatedTest.questions[questionIndex].answeredIndex = optionIndex;
+      updatedTest.questions[questionIndex].answeredIndex = optionIndex + 1;
       setTest(updatedTest);
+      console.log('Questionanswered:', questionIndex, 'Answer:', optionIndex + 1);
     }
   };
-  
+
   const handleSubmit = () => {
-    // Compare answers with the correct answers stored in the test object
     const score = answers.reduce((total, answer, index) => {
-      const correctAnswerIndex = test.questions[index].correctAnswer;
-      return answer === correctAnswerIndex ? total + 1 : total;
+      const correctAnswerIndex = parseInt(test.questions[index].correctAnswer, 10);
+      console.log(`Question ${index + 1}: Correct Answer Index - ${correctAnswerIndex}, User Answer - ${answer}`);
+      return answer === correctAnswerIndex? total + 1 : total;
     }, 0);
 
     alert(`You scored ${score} out of ${test.questions.length}`);
@@ -114,7 +127,9 @@ const TestAttendingMode = () => {
         Access Test
       </button>
 
-      {showAlert && <p className="test-alert">{error}</p>}
+      {showAlert && (
+        <p className={`test-alert ${showAlert? 'how' : ''}`}>{error}</p>
+      )}
 
       {test && (
         <div className="test-details">
@@ -140,8 +155,8 @@ const TestAttendingMode = () => {
                     type="radio"
                     id={`q${index}_opt${optionIndex}`}
                     name={`question_${index}`}
-                    value={optionIndex}
-                    checked={answers[index] === optionIndex}
+                    value={optionIndex + 1} // Updated to start from 1
+                    checked={answers[index] === optionIndex + 1}
                     onChange={() => handleOptionSelect(index, optionIndex)}
                     disabled={question.answered}
                   />

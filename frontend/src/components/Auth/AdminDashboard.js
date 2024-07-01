@@ -6,8 +6,6 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FaCopy } from 'react-icons/fa';
 import '../styles/AdminDashboard.css';
 
-
-
 const AdminDashboard = () => {
     // State for user creation
     const [userData, setUserData] = useState({
@@ -51,7 +49,7 @@ const AdminDashboard = () => {
     };
 
     const [formData, setFormData] = useState({
-        title: '', // Ensure title is initialized in state
+        title: '',
         questions: [
             { text: '', options: ['', '', '', ''], correctAnswer: 0 }
         ],
@@ -70,6 +68,8 @@ const AdminDashboard = () => {
                 const questions = [...prevState.questions];
                 if (oIndex !== undefined) {
                     questions[qIndex].options[oIndex] = value;
+                } else if (name === 'correctAnswer') {
+                    questions[qIndex][name] = parseInt(value); // Ensure correctAnswer is parsed to int
                 } else {
                     questions[qIndex][name] = value;
                 }
@@ -169,7 +169,7 @@ const AdminDashboard = () => {
                         setShowCreateTest(false);
                     }}
                 >
-                    {sidebarOpen                         ? 'Create User' : 'User'}
+                    {sidebarOpen ? 'Create User' : 'User'}
                 </button>
                 <button
                     className={`sidebar-option ${showCreateFaculty ? 'active' : ''}`}
@@ -411,4 +411,3 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
-

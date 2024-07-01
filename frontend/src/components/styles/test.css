@@ -1,0 +1,107 @@
+.test-attending-container {
+    max-width: 1200px; /* increased width */
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #000; /* shiny black background */
+    border: 1px solid #333;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    color: #fff; /* white text color */
+    border-radius: 10px; /* added border radius for a shiny effect */
+  }
+  
+  .test-header {
+    background-color: #333; /* dark gray background */
+    color: #fff; /* white text color */
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #444; /* added border bottom */
+  }
+  
+  .test-heading {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #fff; /* white text color */
+  }
+  
+  .test-input-container {
+    margin-top: 20px;
+  }
+  
+  .test-label {
+    display: block;
+    margin-bottom: 10px;
+    color: #fff; /* white text color */
+  }
+  
+  .test-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    color: #fff; /* white text color */
+    background-color: #333; /* dark gray background */
+  }
+  
+  .test-button {
+    background-color: #4CAF50; /* green background */
+    color: #fff; /* white text color */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .test-button:hover {
+    background-color: #3e8e41; /* darker green background */
+  }
+  
+  .test-alert {
+    color: #FF0000; /* red text color */
+    font-size: 16px;
+    margin-top: 10px;
+  }
+  
+  .webcam-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+  
+  .webcam {
+    width: 320px;
+    height: 240px;
+    border: 1px solid black;
+  }
+  
+  .question-container {
+    margin-top: 20px;
+  }
+  
+  .question-container p {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #fff; /* white text color */
+  }
+  
+  .question-container input[type="radio"] {
+    margin-right: 10px;
+  }
+  
+  .question-container label {
+    font-size: 16px;
+    color: #fff; /* white text color */
+  }
+  .test-alert {
+    color: #000; /* default text color */
+  }
+  
+  .test-alert.correct {
+    color: #fff; /* green text color */
+    /* dark gray background to make green text visible */
+  }
+  
+  .test-alert.incorrect {
+    color: #FF0000; /* red text color */
+  }
+  

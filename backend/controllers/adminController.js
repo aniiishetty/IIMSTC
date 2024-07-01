@@ -1,3 +1,5 @@
+// controllers/adminController.js
+
 import express from 'express';
 import bcrypt from 'bcrypt';
 import csv from 'csv-parser';
@@ -105,7 +107,7 @@ export const createTest = async (req, res) => {
     if (typeof question !== 'object' || !question.text || !Array.isArray(question.options) || question.options.length === 0) {
       return res.status(400).json({ message: 'Each question must be an object with text and non-empty options array' });
     }
-    question.correctAnswer = parseInt(question.correctAnswer, 10);
+    question.correctAnswer = parseInt(question.correctAnswer, 10); // Ensure correctAnswer is parsed to int
   }
 
   if (typeof noTabSwitch !== 'boolean') {
@@ -156,7 +158,7 @@ export const uploadQuestions = async (req, res) => {
       questions.push({
         text: row.question,
         options: [row.option1, row.option2, row.option3, row.option4],
-        correctAnswer: parseInt(row.correctAnswer, 10)
+        correctAnswer: parseInt(row.correctAnswer, 10) - 1 // Adjusting correctAnswer index to start from 0
       });
     })
     .on('end', async () => {
@@ -173,6 +175,11 @@ export const uploadQuestions = async (req, res) => {
       } catch (error) {
         console.error(error.message);
         res.status(500).send('Server error');
+      } finally {
+        // Cleanup: Delete the uploaded CSV file after processing
+        fs.unlinkSync(filePath);
       }
     });
 };
+
+export default app;
