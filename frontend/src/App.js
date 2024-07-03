@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import Login from './components/Auth/Login';
@@ -8,7 +9,6 @@ import AdminDashboard from './components/Auth/AdminDashboard';
 
 import LoginForm from './components/Auth/LoginForm';
 import TestAttendingMode from './components/Auth/TestAttendingMode';
-;
 
 function App() {
   return (

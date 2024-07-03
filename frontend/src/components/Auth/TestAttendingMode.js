@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Webcam from 'react-webcam';
 import { getTestByTitle } from '../../services/testService';
-import '../styles/test.css'; // Assuming your CSS file is named test.css
+//import '../styles/test.css'; // Assuming your CSS file is named test.css
 
 const TestAttendingMode = () => {
   const [testTitle, setTestTitle] = useState('');

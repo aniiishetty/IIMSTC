@@ -1,0 +1,146 @@
+/* AdminDashboard.module.css */
+
+/* Sidebar styles */
+.sidebar {
+    width: 250px; /* Width of the sidebar */
+    height: 100%; /* Full height of the sidebar */
+    background-color: #292929; /* Dark background color */
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    position: fixed; /* Fixed positioning to stay visible */
+    top: 0;
+    left: 0;
+    overflow-y: auto; /* Enable vertical scrolling if content exceeds height */
+    z-index: 1000; /* Ensure sidebar is above other content */
+}
+
+.sidebar.closed {
+    transform: translateX(-250px); /* Move sidebar off-screen */
+}
+
+.sidebar-toggle {
+    cursor: pointer;
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #fff; /* White color for better visibility */
+    transition: transform 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+.sidebar-toggle:hover {
+    color: #007bff; /* Change color on hover */
+}
+
+.sidebar-option {
+    display: block;
+    width: 100%;
+    padding: 12px 20px; /* Padding for the sidebar options */
+    margin-bottom: 10px;
+    background-color: #333; /* Dark background color */
+    border: none;
+    color: #fff; /* White text color */
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+.sidebar-option.active {
+    background-color: #007bff; /* Active background color */
+    color: #fff; /* White text color */
+}
+
+/* Sidebar animation */
+@keyframes sidebarAnimation {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Content styles */
+.content {
+    margin-left: 250px; /* Margin to accommodate expanded sidebar */
+    flex: 1;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+}
+
+.content.closed {
+    margin-left: 0; /* No margin when sidebar is closed */
+}
+
+.form {
+    max-width: 800px; /* Maximum width of the form */
+    margin: 20px auto; /* Center-align and provide margin */
+    padding: 30px;
+    background-color: #fff; /* White background color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px; /* Rounded corners */
+}
+
+.input {
+    width: calc(100% - 24px); /* Adjusted width for padding */
+    margin-bottom: 16px; /* Margin between inputs */
+    padding: 12px; /* Padding inside inputs */
+    font-size: 16px; /* Font size of inputs */
+    border: 1px solid #ccc; /* Border color */
+    border-radius: 4px; /* Border radius */
+}
+
+.button {
+    display: inline-block;
+    width: auto; /* Width to fit content */
+    padding: 12px 20px; /* Padding for button */
+    background-color: #007bff; /* Button background color */
+    color: #fff; /* Button text color */
+    border: none; /* No border */
+    border-radius: 4px; /* Border radius */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.button:hover {
+    background-color: #0056b3; /* Button background color on hover */
+}
+
+.question-container {
+    margin-bottom: 24px; /* Margin between question containers */
+}
+
+.copied {
+    color: green; /* Color of copied text */
+    font-size: 14px; /* Font size of copied text */
+}
+
+/* Media queries for responsive design */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 200px; /* Adjusted width for medium screens */
+    }
+
+    .sidebar.closed {
+        transform: translateX(-200px); /* Move sidebar off-screen */
+    }
+
+    .content {
+        margin-left: 200px; /* Margin to accommodate expanded sidebar */
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 150px; /* Adjusted width for small screens */
+    }
+
+    .sidebar.closed {
+        transform: translateX(-150px); /* Move sidebar off-screen */
+    }
+
+    .content {
+        margin-left: 0; /* No margin when sidebar is closed */
+    }
+}

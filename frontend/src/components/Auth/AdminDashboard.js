@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { createUser, createFaculty, createTest, uploadQuestions } from '../../services/adminService';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FaCopy } from 'react-icons/fa';
-import '../styles/AdminDashboard.css';
+import styles from '../styles/AdminDashboard.module.css'; // Import CSS module
 
 const AdminDashboard = () => {
     // State for user creation
@@ -155,14 +155,14 @@ const AdminDashboard = () => {
 
     return (
         <div style={{ display: 'flex' }}>
-            <div className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
+            <div className={`$${styles.sidebar} ${sidebarOpen ? styles.open : styles.closed}`}>
                 {/* Sidebar toggle button */}
-                <div className="sidebar-toggle" onClick={toggleSidebar}>
+                <div className={styles['sidebar-toggle']} onClick={toggleSidebar}>
                     {sidebarOpen ? '<' : '>'}
                 </div>
                 {/* Sidebar options */}
                 <button
-                    className={`sidebar-option ${showCreateUser ? 'active' : ''}`}
+                    className={`${styles['sidebar-option']} ${showCreateUser ? styles.active : ''}`}
                     onClick={() => {
                         setShowCreateUser(true);
                         setShowCreateFaculty(false);
@@ -172,7 +172,7 @@ const AdminDashboard = () => {
                     {sidebarOpen ? 'Create User' : 'User'}
                 </button>
                 <button
-                    className={`sidebar-option ${showCreateFaculty ? 'active' : ''}`}
+                    className={`${styles['sidebar-option']} ${showCreateFaculty ? styles.active : ''}`}
                     onClick={() => {
                         setShowCreateFaculty(true);
                         setShowCreateUser(false);
@@ -182,7 +182,7 @@ const AdminDashboard = () => {
                     {sidebarOpen ? 'Create Faculty' : 'Faculty'}
                 </button>
                 <button
-                    className={`sidebar-option ${showCreateTest ? 'active' : ''}`}
+                    className={`${styles['sidebar-option']} ${showCreateTest ? styles.active : ''}`}
                     onClick={() => {
                         setShowCreateTest(true);
                         setShowCreateUser(false);
@@ -192,10 +192,10 @@ const AdminDashboard = () => {
                     {sidebarOpen ? 'Create Test' : 'Test'}
                 </button>
             </div>
-            <div className={`content ${sidebarOpen ? 'open' : 'closed'}`}>
+            <div className={`${styles.content} ${sidebarOpen ? styles.open : styles.closed}`}>
                 {/* Create User Form */}
                 {showCreateUser && (
-                    <form className="form" onSubmit={handleCreateUser}>
+                    <form className={styles.form} onSubmit={handleCreateUser}>
                         <h2>Create User</h2>
                         <input
                             type="text"
@@ -205,7 +205,7 @@ const AdminDashboard = () => {
                                 setUserData({ ...userData, firstName: e.target.value })
                             }
                             placeholder="First Name"
-                            className="input"
+                            className={styles.input}
                         />
                         <input
                             type="text"
@@ -215,7 +215,7 @@ const AdminDashboard = () => {
                                 setUserData({ ...userData, lastName: e.target.value })
                             }
                             placeholder="Last Name"
-                            className="input"
+                            className={styles.input}
                         />
                         <input
                             type="date"
@@ -225,9 +225,9 @@ const AdminDashboard = () => {
                                 setUserData({ ...userData, dateOfBirth: e.target.value })
                             }
                             placeholder="Date of Birth"
-                            className="input"
+                            className={styles.input}
                         />
-                        <button type="submit" className="button">
+                        <button type="submit" className={styles.button}>
                             Create User
                         </button>
                         {userResponse && (
@@ -238,11 +238,11 @@ const AdminDashboard = () => {
                                     text={userResponse.password}
                                     onCopy={() => setCopied(true)}
                                 >
-                                    <button className="button">
+                                    <button className={styles.button}>
                                         <FaCopy />
                                     </button>
                                 </CopyToClipboard>
-                                {copied ? <span className="copied">Copied!</span> : null}
+                                {copied ? <span className={styles.copied}>Copied!</span> : null}
                             </div>
                         )}
                     </form>
@@ -250,7 +250,7 @@ const AdminDashboard = () => {
 
                 {/* Create Faculty Form */}
                 {showCreateFaculty && (
-                    <form className="form" onSubmit={handleCreateFaculty}>
+                    <form className={styles.form} onSubmit={handleCreateFaculty}>
                         <h2>Create Faculty</h2>
                         <input
                             type="text"
@@ -260,154 +260,152 @@ const AdminDashboard = () => {
                                 setFacultyData({ ...facultyData, firstName: e.target.value })
                             }
                             placeholder="First Name"
-                            className="input"
+                            className={styles.input}
                         />
                         <input
                             type="text"
                             name="lastName"
                             value={facultyData.lastName}
-                            onChange={(e) =>
-                                setFacultyData({ ...facultyData, lastName: e.target.value })
-                            }
-                            placeholder="Last Name"
-                            className="input"
-                        />
-                        <input
-                            type="date"
-                            name="dateOfBirth"
-                            value={facultyData.dateOfBirth}
-                            onChange={(e) =>
-                                setFacultyData({ ...facultyData, dateOfBirth: e.target.value })
-                            }
-                            placeholder="Date of Birth"
-                            className="input"
-                        />
-                        <button type="submit" className="button">
-                            Create Faculty
-                        </button>
-                        {facultyResponse && (
-                            <div>
-                                <p>Username: {facultyResponse.username}</p>
-                                <p>Password: {facultyResponse.password}</p>
-                                <CopyToClipboard
-                                    text={facultyResponse.password}
-                                    onCopy={() => setCopied(true)}
-                                >
-                                    <button className="button">
-                                        <FaCopy />
-                                    </button>
-                                </CopyToClipboard>
-                                {copied ? <span className="copied">Copied!</span> : null}
-                            </div>
-                        )}
-                    </form>
-                )}
-
-                {/* Create Test Form */}
-                {showCreateTest && (
-                    <form className="form" onSubmit={handleSubmit}>
-                        <h2>Create Test</h2>
-                        <input
-                            type="text"
-                            name="title"
-                            value={formData.title}
-                            onChange={(e) => handleChange(e)}
-                            placeholder="Title"
-                            className="input"
-                        />
-                        {formData.questions.map((question, qIndex) => (
-                            <div key={qIndex} className="question-container">
+onChange={(e) =>
+setFacultyData({ ...facultyData, lastName: e.target.value })
+}
+placeholder="Last Name"
+className={styles.input}
+/>
+<input
+type="date"
+name="dateOfBirth"
+value={facultyData.dateOfBirth}
+onChange={(e) =>
+setFacultyData({ ...facultyData, dateOfBirth: e.target.value })
+}
+placeholder="Date of Birth"
+className={styles.input}
+/>
+<button type="submit" className={styles.button}>
+Create Faculty
+</button>
+{facultyResponse && (
+<div>
+<p>Username: {facultyResponse.username}</p>
+<p>Password: {facultyResponse.password}</p>
+<CopyToClipboard
+text={facultyResponse.password}
+onCopy={() => setCopied(true)}
+>
+<button className={styles.button}>
+<FaCopy />
+</button>
+</CopyToClipboard>
+{copied ? <span className={styles.copied}>Copied!</span> : null}
+</div>
+)}
+</form>
+)}
+            {/* Create Test Form */}
+            {showCreateTest && (
+                <form className={styles.form} onSubmit={handleSubmit}>
+                    <h2>Create Test</h2>
+                    <input
+                        type="text"
+                        name="title"
+                        value={formData.title}
+                        onChange={(e) => handleChange(e)}
+                        placeholder="Title"
+                        className={styles.input}
+                    />
+                    {formData.questions.map((question, qIndex) => (
+                        <div key={qIndex} className={styles['question-container']}>
+                            <input
+                                type="text"
+                                name="text"
+                                value={question.text}
+                                onChange={(e) => handleChange(e, qIndex)}
+                                placeholder="Question"
+                                className={styles.input}
+                            />
+                            {question.options.map((option, oIndex) => (
                                 <input
+                                    key={oIndex}
                                     type="text"
-                                    name="text"
-                                    value={question.text}
-                                    onChange={(e) => handleChange(e, qIndex)}
-                                    placeholder="Question"
-                                    className="input"
+                                    value={option}
+                                    onChange={(e) => handleChange(e, qIndex, oIndex)}
+                                    placeholder={`Option ${oIndex + 1}`}
+                                    className={styles.input}
                                 />
-                                {question.options.map((option, oIndex) => (
-                                    <input
-                                        key={oIndex}
-                                        type="text"
-                                        value={option}
-                                        onChange={(e) => handleChange(e, qIndex, oIndex)}
-                                        placeholder={`Option ${oIndex + 1}`}
-                                        className="input"
-                                    />
+                            ))}
+                            <select
+                                value={question.correctAnswer}
+                                onChange={(e) => handleChange(e, qIndex)}
+                                name="correctAnswer"
+                                className={styles.input}
+                            >
+                                <option value="">Select Correct Answer</option>
+                                {question.options.map((_, index) => (
+                                    <option key={index} value={index}>
+                                        Option {index + 1}
+                                    </option>
                                 ))}
-                                <select
-                                    value={question.correctAnswer}
-                                    onChange={(e) => handleChange(e, qIndex)}
-                                    name="correctAnswer"
-                                    className="input"
-                                >
-                                    <option value="">Select Correct Answer</option>
-                                    {question.options.map((_, index) => (
-                                        <option key={index} value={index}>
-                                            Option {index + 1}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        ))}
-                        <button type="button" className="button" onClick={addQuestion}>
-                            Add Question
-                        </button>
-                        <label>
-                            No Tab Switch
-                            <input
-                                type="checkbox"
-                                name="noTabSwitch"
-                                checked={formData.noTabSwitch}
-                                onChange={(e) => handleChange(e)}
-                            />
-                        </label>
-                        <label>
-                            Webcam Access
-                            <input
-                                type="checkbox"
-                                name="webcamAccess"
-                                checked={formData.webcamAccess}
-                                onChange={(e) => handleChange(e)}
-                            />
-                        </label>
+                            </select>
+                        </div>
+                    ))}
+                    <button type="button" className={styles.button} onClick={addQuestion}>
+                        Add Question
+                    </button>
+                    <label>
+                        No Tab Switch
                         <input
-                            type="number"
-                            name="timeLimit"
-                            value={formData.timeLimit}
+                            type="checkbox"
+                            name="noTabSwitch"
+                            checked={formData.noTabSwitch}
                             onChange={(e) => handleChange(e)}
-                            placeholder="Time Limit (in minutes)"
-                            className="input"
                         />
+                    </label>
+                    <label>
+                        Webcam Access
                         <input
-                            type="file"
-                            accept=".csv"
-                            onChange={handleFileUpload}
-                            className="input"
+                            type="checkbox"
+                            name="webcamAccess"
+                            checked={formData.webcamAccess}
+                            onChange={(e) => handleChange(e)}
                         />
-                        <button type="submit" className="button">
-                            Create Test
-                        </button>
-                        {successMessage && <p>{successMessage}</p>}
-                        {testId && (
-                            <div>
-                                <p>Test ID: {testId}</p>
-                                <CopyToClipboard
-                                    text={testId}
-                                    onCopy={() => setCopied(true)}
-                                >
-                                    <button className="button">
-                                        <FaCopy />
-                                    </button>
-                                </CopyToClipboard>
-                                {copied ? <span className="copied">Copied!</span> : null}
-                            </div>
-                        )}
-                    </form>
-                )}
-            </div>
+                    </label>
+                    <input
+                        type="number"
+                        name="timeLimit"
+                        value={formData.timeLimit}
+                        onChange={(e) => handleChange(e)}
+                        placeholder="Time Limit (in minutes)"
+                        className={styles.input}
+                    />
+                    <input
+                        type="file"
+                        accept=".csv"
+                        onChange={handleFileUpload}
+                        className={styles.input}
+                    />
+                    <button type="submit" className={styles.button}>
+                        Create Test
+                    </button>
+                    {successMessage && <p>{successMessage}</p>}
+                    {testId && (
+                        <div>
+                            <p>Test ID: {testId}</p>
+                            <CopyToClipboard
+                                text={testId}
+                                onCopy={() => setCopied(true)}
+                            >
+                                <button className={styles.button}>
+                                    <FaCopy />
+                                </button>
+                            </CopyToClipboard>
+                            {copied ? <span className={styles.copied}>Copied!</span> : null}
+                        </div>
+                    )}
+                </form>
+            )}
         </div>
-    );
+    </div>
+);
 };
-
 export default AdminDashboard;
