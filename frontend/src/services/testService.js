@@ -1,12 +1,11 @@
-// testService.js
-
 import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/tests'; // Adjust as per your backend API URL
 
-export const getTestByTitle = async (testTitle) => {
+export const getTestByTitle = async (title) => {
   try {
-    const response = await axios.get(`${API_URL}?title=${testTitle}`);
+    const response = await axios.get(`${API_URL}/${encodeURIComponent(title)}`); // Ensure title is properly encoded
+
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : error;

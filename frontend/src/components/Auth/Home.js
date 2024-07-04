@@ -1,58 +1,247 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../../contexts/AuthContext';
+import { login, register } from '../../services/authService';
+import { useNavigate } from 'react-router-dom';
+import userAuthService from '../../services/userAuthService';
+import facultyAuthService from '../../services/facultyAuthService';
+import styles from '../styles/Home.module.css';
 
 const Home = () => {
-  const containerStyle = {
-    backgroundImage: 'url(https://iimstc.com/wp-content/uploads/slider/cache/e0a4105f14d43d1eae165e5b1f24238b/slider23.jpg)',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    height: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: 'white',
-    textAlign: 'center',
-    position: 'relative'
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState(null);
+  const { setAuth } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [selectedOption, setSelectedOption] = useState('admin');
+
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+
+    try {
+      const data = await login(username, password);
+      setAuth(data.token);
+      navigate('/admin-dashboard', { replace: true });
+    } catch (err) {
+      setError('Invalid credentials');
+    }
   };
 
-  const topLeftImageStyle = {
-    position: 'absolute',
-    top: '10px',
-    left: '10px',
-    width: '100px', // Adjust the size as needed
-    height: 'auto'
+  const handleSignupSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+
+    try {
+      await register(username, password);
+      setSelectedOption('admin');
+      setUsername('');
+      setPassword('');
+      setError(null);
+    } catch (err) {
+      setError('Registration failed');
+    }
   };
 
-  const buttonStyle = {
-    padding: '10px 20px',
-    marginTop: '20px',
-    backgroundColor: '#007bff',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease'
+  const handleUserLoginSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      await userAuthService.login(username, password);
+      navigate('/user-test');
+    } catch (error) {
+      setError('Invalid credentials. Please try again.');
+    }
   };
 
-  const buttonHoverStyle = {
-    backgroundColor: '#0056b3'
+  const handleFacultyLoginSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      await facultyAuthService.login(username, password);
+      navigate('/faculty-dashboard');
+    } catch (error) {
+      setError('Invalid credentials. Please try again.');
+    }
+  };
+
+  const renderForm = () => {
+    switch (selectedOption) {
+      case 'admin':
+        return (
+          <form className={styles.form} onSubmit={handleLoginSubmit}>
+            {error && <p className={styles.error}>{error}</p>}
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
+              required
+              className={styles.input}
+            />
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              required
+              className={styles.input}
+            />
+            <div className={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={showPassword}
+                onChange={(e) => setShowPassword(e.target.checked)}
+              />
+              <label style={{ color: 'black' }}>Show Password</label>
+            </div>
+            <button type="submit" className={styles.button}>
+              Login
+            </button>
+            <p style={{ color: 'black' }}>
+              Don't have an account?{' '}
+              <button
+                type="button"
+                className={styles.link}
+                onClick={() => setSelectedOption('signup')}
+              >
+                Sign Up
+              </button>
+            </p>
+          </form>
+        );
+      case 'signup':
+        return (
+          <form className={styles.form} onSubmit={handleSignupSubmit}>
+            {error && <p className={styles.error}>{error}</p>}
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
+              required
+              className={styles.input}
+            />
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              required
+              className={styles.input}
+            />
+            <div className={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={showPassword}
+                onChange={(e) => setShowPassword(e.target.checked)}
+              />
+              <label style={{ color: 'black' }}>Show Password</label>
+            </div>
+            <button type="submit" className={styles.button}>
+              Signup
+            </button>
+            <p style={{ color: 'black' }}>
+              Already have an account?{' '}
+              <button
+                type="button"
+                className={styles.link}
+                onClick={() => setSelectedOption('admin')}
+              >
+                Login
+              </button>
+            </p>
+          </form>
+        );
+      case 'userLogin':
+        return (
+          <form className={styles.form} onSubmit={handleUserLoginSubmit}>
+            {error && <p className={styles.error}>{error}</p>}
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="User ID"
+              required
+              className={styles.input}
+            />
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              required
+              className={styles.input}
+            />
+            <div className={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={showPassword}
+                onChange={(e) => setShowPassword(e.target.checked)}
+              />
+              <label style={{ color: 'black' }}>Show Password</label>
+            </div>
+            <button type="submit" className={styles.button}>
+              User Login
+            </button>
+          </form>
+        );
+      case 'facultyLogin':
+        return (
+          <form className={styles.form} onSubmit={handleFacultyLoginSubmit}>
+            {error && <p className={styles.error}>{error}</p>}
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Faculty ID"
+              required
+              className={styles.input}
+            />
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              required
+              className={styles.input}
+            />
+            <div className={styles.checkbox}>
+              <input
+                type="checkbox"
+                checked={showPassword}
+                onChange={(e) => setShowPassword(e.target.checked)}
+              />
+              <label style={{ color: 'black' }}>Show Password</label>
+            </div>
+            <button type="submit" className={styles.button}>
+              Faculty Login
+            </button>
+          </form>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
-    <div style={containerStyle}>
-      <img src="https://iimstc.com/wp-content/uploads/2021/10/log.png" alt="Top Left" style={topLeftImageStyle} />
-      <h2>Welcome to the Home Page</h2>
-      <p>This is the home page content.</p>
-      <Link to="/login">
-        <button
-          style={buttonStyle}
-          onMouseEnter={e => e.target.style.backgroundColor = buttonHoverStyle.backgroundColor}
-          onMouseLeave={e => e.target.style.backgroundColor = buttonStyle.backgroundColor}
-        >
-          Go to Login
-        </button>
-      </Link>
+    <div className={styles.container}>
+      <img src="https://iimstc.com/wp-content/uploads/2021/10/log.png" alt="Top Left" className={styles.topLeftImage} />
+    
+      
+      <select
+        value={selectedOption}
+        onChange={(e) => setSelectedOption(e.target.value)}
+        className={styles.dropdown}
+      >
+        <option value="admin">Admin Login</option>
+        <option value="signup">Sign Up</option>
+        <option value="userLogin">User Login</option>
+        <option value="facultyLogin">Faculty Login</option>
+      </select>
+      {renderForm()}
+      {/* Added div with id and class as requested */}
+      
     </div>
   );
 };

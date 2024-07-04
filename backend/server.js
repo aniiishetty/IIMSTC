@@ -9,6 +9,7 @@ import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import userAuthRoutes from './routes/userAuthRoutes.js'; // Add this line
 import testRoutes from './routes/testRoutes.js';
+import facultyRoutes from './routes/facultyRoutes.js';
 dotenv.config();
 const app = express();
 
@@ -29,6 +30,7 @@ connectDB().then(() => {
   app.use('/api/admin', adminRoutes);
   app.use('/api/users', userAuthRoutes); // Add this line
   app.use('/api/tests', testRoutes);
+  app.use('/api/faculty', facultyRoutes);
   const PORT = process.env.PORT || 5000;
 
   app.listen(PORT, () => {

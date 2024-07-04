@@ -1,10 +1,8 @@
-/* AdminDashboard.module.css */
-
 /* Sidebar styles */
 .sidebar {
     width: 250px; /* Width of the sidebar */
     height: 100%; /* Full height of the sidebar */
-    background-color: #292929; /* Dark background color */
+    background-color: #032B44; /* Dark blue background color */
     padding: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
@@ -35,18 +33,26 @@
 .sidebar-option {
     display: block;
     width: 100%;
-    padding: 12px 20px; /* Padding for the sidebar options */
+    padding: 12px 20px;
     margin-bottom: 10px;
     background-color: #333; /* Dark background color */
     border: none;
     color: #fff; /* White text color */
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Smooth transition */
+    position: sticky; /* Add this line */
+    top: 20px;
+    border-radius: 5px 5px 10px 10px;
 }
 
 .sidebar-option.active {
-    background-color: #007bff; /* Active background color */
-    color: #fff; /* White text color */
+    background-color: #34C759; /* Green color when selected */
+    color: #fff; /* White text color when selected */
+}
+.sidebar-option:not(.active) {
+    background-color: #1f64d3; /* Gray color when not selected */
+    color: #fff; /* Dark gray text color when not selected */
 }
 
 /* Sidebar animation */
@@ -118,29 +124,29 @@
 
 /* Media queries for responsive design */
 @media (max-width: 992px) {
-    .sidebar {
+   .sidebar {
         width: 200px; /* Adjusted width for medium screens */
     }
 
-    .sidebar.closed {
+   .sidebar.closed {
         transform: translateX(-200px); /* Move sidebar off-screen */
     }
 
-    .content {
+   .content {
         margin-left: 200px; /* Margin to accommodate expanded sidebar */
     }
 }
 
 @media (max-width: 768px) {
-    .sidebar {
+   .sidebar {
         width: 150px; /* Adjusted width for small screens */
     }
 
-    .sidebar.closed {
+   .sidebar.closed {
         transform: translateX(-150px); /* Move sidebar off-screen */
     }
 
-    .content {
+   .content {
         margin-left: 0; /* No margin when sidebar is closed */
     }
 }

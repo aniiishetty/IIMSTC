@@ -1,28 +1,20 @@
-// testController.js
-
 import Test from '../models/Test.js';
-import express from 'express';
 
-const app = express();
-app.use(express.json());
+export const getTestByTitle = async (req, res) => {
+  const { title } = req.params;
 
-export const getTestByTitle = async (testTitle) => {
+  if (!title) {
+    return res.status(400).json({ message: 'Title is required' });
+  }
+
   try {
-    const test = await Test.findOne({ title: testTitle });
-
+    const test = await Test.findOne({ title });
     if (!test) {
-      throw new Error('Test not found');
+      return res.status(404).json({ message: 'Test not found' });
     }
-
-    // Map correctAnswer to each question starting from 0
-    const populatedTest = test.toObject();
-    populatedTest.questions = populatedTest.questions.map(question => ({
-      ...question,
-      correctAnswer: question.correctAnswer - 1  // Adjust correctAnswer to start from 0
-    }));
-
-    return populatedTest;
+    res.json(test);
   } catch (error) {
-    throw new Error(`Error fetching test: ${error.message}`);
+    console.error(error.message);
+    res.status(500).send('Server error');
   }
 };

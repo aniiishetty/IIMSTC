@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import userAuthService from '../../services/userAuthService';
 
-const LoginForm = () => {
+const UserLog = () => {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); // State to manage password visibility
@@ -125,4 +125,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default UserLog;

@@ -24,7 +24,7 @@ const AdminDashboard = () => {
     const [facultyResponse, setFacultyResponse] = useState(null); // Response from API
 
     const [copied, setCopied] = useState(false); // State for copy functionality
-    const [showCreateUser, setShowCreateUser] = useState(false); // State to manage visibility of create user form
+    const [showCreateUser, setShowCreateUser] = useState(true); // State to manage visibility of create user form
     const [showCreateFaculty, setShowCreateFaculty] = useState(false); // State to manage visibility of create faculty form
     const [showCreateTest, setShowCreateTest] = useState(false); // State to manage visibility of create test form
 
@@ -195,6 +195,7 @@ const AdminDashboard = () => {
             <div className={`${styles.content} ${sidebarOpen ? styles.open : styles.closed}`}>
                 {/* Create User Form */}
                 {showCreateUser && (
+                     <div className={styles.createContent}>
                     <form className={styles.form} onSubmit={handleCreateUser}>
                         <h2>Create User</h2>
                         <input
@@ -232,24 +233,26 @@ const AdminDashboard = () => {
                         </button>
                         {userResponse && (
                             <div>
-                                <p>Username: {userResponse.username}</p>
+                                <p>UserId: {userResponse.userId}</p>
                                 <p>Password: {userResponse.password}</p>
                                 <CopyToClipboard
-                                    text={userResponse.password}
-                                    onCopy={() => setCopied(true)}
-                                >
-                                    <button className={styles.button}>
-                                        <FaCopy />
-                                    </button>
-                                </CopyToClipboard>
+        text={`${userResponse.userId} ${userResponse.password}`}
+        onCopy={() => setCopied(true)}
+    >
+        <button className={styles.button}>
+            <FaCopy />
+        </button>
+    </CopyToClipboard>
                                 {copied ? <span className={styles.copied}>Copied!</span> : null}
                             </div>
                         )}
                     </form>
+                    </div>
                 )}
 
                 {/* Create Faculty Form */}
                 {showCreateFaculty && (
+                     <div className={styles.createContent}>
                     <form className={styles.form} onSubmit={handleCreateFaculty}>
                         <h2>Create Faculty</h2>
                         <input
@@ -287,23 +290,25 @@ Create Faculty
 </button>
 {facultyResponse && (
 <div>
-<p>Username: {facultyResponse.username}</p>
+<p>FacultyId: {facultyResponse.facultyId}</p>
 <p>Password: {facultyResponse.password}</p>
 <CopyToClipboard
-text={facultyResponse.password}
-onCopy={() => setCopied(true)}
->
-<button className={styles.button}>
-<FaCopy />
-</button>
-</CopyToClipboard>
+        text={`${facultyResponse.facultyId} ${facultyResponse.password}`}
+        onCopy={() => setCopied(true)}
+    >
+        <button className={styles.button}>
+            <FaCopy />
+        </button>
+    </CopyToClipboard>
 {copied ? <span className={styles.copied}>Copied!</span> : null}
 </div>
 )}
 </form>
+</div>
 )}
             {/* Create Test Form */}
             {showCreateTest && (
+                 <div className={styles.createContent}>
                 <form className={styles.form} onSubmit={handleSubmit}>
                     <h2>Create Test</h2>
                     <input
@@ -403,6 +408,7 @@ onCopy={() => setCopied(true)}
                         </div>
                     )}
                 </form>
+                </div>
             )}
         </div>
     </div>

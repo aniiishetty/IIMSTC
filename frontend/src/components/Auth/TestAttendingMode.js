@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Webcam from 'react-webcam';
 import { getTestByTitle } from '../../services/testService';
-//import '../styles/test.css'; // Assuming your CSS file is named test.css
+import styles from '../styles/test.module.css'; // Assuming your CSS file is named test.module.css
 
 const TestAttendingMode = () => {
-  const [testTitle, setTestTitle] = useState('');
+  const [title, setTitle] = useState('');
   const [test, setTest] = useState(null);
   const [webcamAccess, setWebcamAccess] = useState(false);
   const [error, setError] = useState(null);
@@ -17,7 +17,7 @@ const TestAttendingMode = () => {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (test && test.noTabSwitch) {
-        setTabSwitchCount(prevCount => prevCount + 1);
+        setTabSwitchCount((prevCount) => prevCount + 1);
         console.log('Tab switch count:', tabSwitchCount + 1);
       }
     };
@@ -27,7 +27,7 @@ const TestAttendingMode = () => {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [test]);
+  }, [test, tabSwitchCount]);
 
   useEffect(() => {
     console.log('Tab switch count changed:', tabSwitchCount);
@@ -41,7 +41,7 @@ const TestAttendingMode = () => {
 
   const handleTestAccess = async () => {
     try {
-      const response = await getTestByTitle(testTitle);
+      const response = await getTestByTitle(title); // Pass title as parameter
       console.log('Test accessed:', response);
       setTest(response);
       setAnswers(new Array(response.questions.length).fill(null));
@@ -60,7 +60,7 @@ const TestAttendingMode = () => {
     console.log('Test ended.');
     setTest(null);
     setWebcamAccess(false);
-    setTestTitle('');
+    setTitle(''); // Reset title state
     setTabSwitchCount(0);
     setAnswers([]);
   };
@@ -68,13 +68,13 @@ const TestAttendingMode = () => {
   const showAlertMessage = (message, isCorrect) => {
     setError(message);
     setShowAlert(true);
-    const alertElement = document.querySelector('.test-alert');
+    const alertElement = document.querySelector(`.${styles.testAlert}`);
     if (alertElement) {
-      alertElement.classList.add(isCorrect? 'correct' : 'incorrect');
+      alertElement.classList.add(isCorrect ? styles.correct : styles.incorrect);
       setTimeout(() => {
         setShowAlert(false);
         setError(null);
-        alertElement.classList.remove(isCorrect? 'correct' : 'incorrect');
+        alertElement.classList.remove(isCorrect ? styles.correct : styles.incorrect);
       }, 5000);
     }
   };
@@ -82,23 +82,23 @@ const TestAttendingMode = () => {
   const handleOptionSelect = (questionIndex, optionIndex) => {
     if (!test.questions[questionIndex].answered) {
       const updatedAnswers = [...answers];
-      updatedAnswers[questionIndex] = optionIndex + 1; // Updated to start from 1
+      updatedAnswers[questionIndex] = optionIndex; // Start from 0 (zero-based index)
       setAnswers(updatedAnswers);
 
       const correctAnswerIndex = parseInt(test.questions[questionIndex].correctAnswer, 10);
-      console.log('Correct Answer Index:', correctAnswerIndex, 'Selected Option Index:', optionIndex + 1);
+      console.log('Correct Answer Index:', correctAnswerIndex, 'Selected Option Index:', optionIndex);
 
-      const isCorrect = optionIndex + 1 === correctAnswerIndex;
-      const resultMessage = isCorrect? 'Correct answer!' : 'Incorrect answer.';
+      const isCorrect = optionIndex === correctAnswerIndex;
+      const resultMessage = isCorrect ? 'Correct answer!' : 'Incorrect answer.';
 
       // Display alert for correct or incorrect answer
       showAlertMessage(resultMessage, isCorrect);
 
-      const updatedTest = {...test };
+      const updatedTest = { ...test };
       updatedTest.questions[questionIndex].answered = true;
-      updatedTest.questions[questionIndex].answeredIndex = optionIndex + 1;
+      updatedTest.questions[questionIndex].answeredIndex = optionIndex + 1; // Display starts from 1
       setTest(updatedTest);
-      console.log('Questionanswered:', questionIndex, 'Answer:', optionIndex + 1);
+      console.log('Question answered:', questionIndex, 'Answer:', optionIndex);
     }
   };
 
@@ -106,48 +106,48 @@ const TestAttendingMode = () => {
     const score = answers.reduce((total, answer, index) => {
       const correctAnswerIndex = parseInt(test.questions[index].correctAnswer, 10);
       console.log(`Question ${index + 1}: Correct Answer Index - ${correctAnswerIndex}, User Answer - ${answer}`);
-      return answer === correctAnswerIndex? total + 1 : total;
+      return answer === correctAnswerIndex ? total + 1 : total;
     }, 0);
 
     alert(`You scored ${score} out of ${test.questions.length}`);
   };
 
   return (
-    <div className="test-attending-container">
-      <h2 className="test-heading">Test Attending Mode</h2>
-      <label className="test-label">Enter Test Title:</label>
+    <div className={styles.testAttendingContainer}>
+      <h2 className={styles.testHeading}>Test Attending Mode</h2>
+      <label className={styles.testLabel}>Enter Test Title:</label>
       <input
         type="text"
-        value={testTitle}
-        onChange={(e) => setTestTitle(e.target.value)}
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
         placeholder="Enter test title"
-        className="test-input"
+        className={styles.testInput}
       />
-      <button onClick={handleTestAccess} className="test-button">
+      <button onClick={handleTestAccess} className={styles.testButton}>
         Access Test
       </button>
 
       {showAlert && (
-        <p className={`test-alert ${showAlert? 'how' : ''}`}>{error}</p>
+        <p className={`${styles.testAlert} ${showAlert ? styles.show : ''}`}>{error}</p>
       )}
 
       {test && (
-        <div className="test-details">
+        <div className={styles.testDetails}>
           <h3>{test.title}</h3>
           <p>Time Limit: {test.timeLimit} minutes</p>
           {webcamAccess && (
-            <div className="webcam-container">
+            <div className={styles.webcamContainer}>
               <Webcam
                 audio={false}
                 ref={webcamRef}
                 screenshotFormat="image/jpeg"
-                className="webcam"
+                className={styles.webcam}
               />
             </div>
           )}
 
           {test.questions.map((question, index) => (
-            <div key={index} className="question-container">
+            <div key={index} className={styles.questionContainer}>
               <p>{question.text}</p>
               {question.options.map((option, optionIndex) => (
                 <div key={optionIndex}>
@@ -155,8 +155,8 @@ const TestAttendingMode = () => {
                     type="radio"
                     id={`q${index}_opt${optionIndex}`}
                     name={`question_${index}`}
-                    value={optionIndex + 1} // Updated to start from 1
-                    checked={answers[index] === optionIndex + 1}
+                    value={optionIndex} // Updated to start from 0
+                    checked={answers[index] === optionIndex}
                     onChange={() => handleOptionSelect(index, optionIndex)}
                     disabled={question.answered}
                   />
@@ -166,7 +166,7 @@ const TestAttendingMode = () => {
             </div>
           ))}
 
-          <button onClick={handleSubmit} className="test-button">
+          <button onClick={handleSubmit} className={styles.testButton}>
             Submit Test
           </button>
         </div>
