@@ -7,42 +7,46 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: white;
+    /* color: white; */
     text-align: center;
     position: relative;
-  }
-  
-  .topLeftImage {
+    padding-right: 50px; /* Adjust this as needed */
+}
+
+.topLeftImage {
     position: absolute;
     top: 10px;
     left: 10px;
     width: 150px;
     height: auto;
-  }
-  
-  .form {
+}
+
+.form {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 300px;
-    margin: 0 auto;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: white;
-  }
-  
-  .input {
+    position: absolute; /* Position the form absolutely */
+    right: 0; /* Align it to the rightmost end */
+    top: 50%; /* Center it vertically */
+    transform: translateY(-50%); /* Adjust to vertically center it */
+    background-color: black;
+}
+
+.input {
     width: calc(100% - 20px); /* Adjusted width for padding */
     padding: 10px;
     margin: 10px 0;
     border-radius: 5px;
     border: 1px solid #ccc;
     outline: none; /* Remove default outline */
-  }
-  
-  .button {
+}
+
+.button {
     padding: 10px 20px;
     margin-top: 20px;
     background-color: #007bff;
@@ -51,70 +55,115 @@
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-  }
-  
-  .button:hover {
+    font-weight: bold; /* Make button text bold */
+}
+
+.button:hover {
     background-color: #0056b3;
-  }
-  
-  .checkbox {
+}
+
+.checkbox {
     display: flex;
     align-items: center;
     margin-top: 10px;
-  }
-  
-  .error {
+}
+
+.error {
     color: red;
     margin-bottom: 10px;
-  }
-  
-  .dropdown {
+}
+
+.dropdown {
+    position: absolute;
+    top: 90px;
+    right: 90px;
+    width: 150px;
     padding: 10px;
     margin: 20px 0;
+    background-color: #000;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
     border-radius: 5px;
-    border: 2.5px solid #0d0d0d;
-    width: 200px;
-    background-color: #f9f9f9;
-    cursor: pointer;
-    appearance: none; /* Remove default arrow */
-    outline: none; /* Remove default outline */
-    transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
-  }
-  
-  .dropdown:hover,
-  .dropdown:focus {
-    background-color: #fff; /* Hover and focus state */
-    border-color: #fff; /* Hover and focus border color */
-  }
-  
-  .link {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dropdown:hover,
+.dropdown:focus {
+    background-color: #111;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+
+.link {
     background: none;
     border: none;
     color: #007bff;
     cursor: pointer;
-  }
-  
-  .link:hover {
+    font-weight: bold; /* Make link text bold */
+}
+
+.link:hover {
     text-decoration: underline;
-  }
-  
-  .signupText {
+}
+
+.signupText {
     margin-top: 10px;
-    color: black;
-  }
-  
-  .toggle-button {
+    color: white;
+}
+
+.toggle-button {
     background: none;
     border: none;
     color: #007bff;
     cursor: pointer;
-  }
-  
-  .toggle-button:hover {
+}
+
+.toggle-button:hover {
     text-decoration: underline;
-  }
-  
-  .active {
+}
+
+.active {
     background-color: #0056b3;
-  }
-  
+}
+
+.align-right {
+    align-items: flex-end; /* Align items to the right */
+    padding-right: 50px; /* Add padding to move the container further to the right */
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: calc(100% + 5px); /* Position below the dropdown button */
+    background-color: #111 ;
+    min-width: 150px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #333;
+}
+.dropdown-item:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.dropdown-item:first-child {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}

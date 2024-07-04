@@ -55,7 +55,7 @@ const UserLog = () => {
   const buttonStyle = {
     padding: '10px 20px',
     backgroundColor: '#007bff',
-    color: 'white',
+    color: 'black',
     border: 'none',
     borderRadius: '5px',
     cursor: 'pointer',

@@ -93,12 +93,12 @@ const Home = () => {
                 checked={showPassword}
                 onChange={(e) => setShowPassword(e.target.checked)}
               />
-              <label style={{ color: 'black' }}>Show Password</label>
+              <label style={{ color: 'white' }}>Show Password</label>
             </div>
             <button type="submit" className={styles.button}>
               Login
             </button>
-            <p style={{ color: 'black' }}>
+            <p style={{ color: 'white' }}>
               Don't have an account?{' '}
               <button
                 type="button"
@@ -136,12 +136,12 @@ const Home = () => {
                 checked={showPassword}
                 onChange={(e) => setShowPassword(e.target.checked)}
               />
-              <label style={{ color: 'black' }}>Show Password</label>
+              <label style={{ color: 'white' }}>Show Password</label>
             </div>
             <button type="submit" className={styles.button}>
               Signup
             </button>
-            <p style={{ color: 'black' }}>
+            <p style={{ color: 'white' }}>
               Already have an account?{' '}
               <button
                 type="button"
@@ -179,7 +179,7 @@ const Home = () => {
                 checked={showPassword}
                 onChange={(e) => setShowPassword(e.target.checked)}
               />
-              <label style={{ color: 'black' }}>Show Password</label>
+              <label style={{ color: 'white' }}>Show Password</label>
             </div>
             <button type="submit" className={styles.button}>
               User Login
@@ -225,7 +225,7 @@ const Home = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${styles.alignRight}`}>
       <img src="https://iimstc.com/wp-content/uploads/2021/10/log.png" alt="Top Left" className={styles.topLeftImage} />
     
       
@@ -241,8 +241,27 @@ const Home = () => {
       </select>
       {renderForm()}
       {/* Added div with id and class as requested */}
-      
+      <div style={{ fontFamily: 'Roboto, sans-serif', fontSize: '15px', lineHeight: '26px', fontWeight: '400', fontStyle: 'normal', padding: '0', margin: '0', width: '100%' }}>
+    <h1 style={{ fontFamily: 'Roboto', fontSize: '40px', lineHeight: '44px', fontWeight: '500', fontStyle: 'normal', textAlign: 'left', color: '#00853b', margin: '0', padding: '0', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+        <span style={{ backgroundColor: 'rgba(0, 128, 59, 0.5)', color: 'white', padding: '10px 0' }}>
+            Welcome to 
+        </span>
+        <br/><br/>
+        <span style={{ backgroundColor: 'rgba(0, 128, 59, 0.5)', color: 'white', padding: '10px 0' }}>
+            ARCYON INTERNATIONAL INSTITUTE OF 
+            <br/>
+            MEDICAL SCIENCE AND TECHNOLOGY COUNCIL
+        </span>
+    </h1>
+</div>
+
+
+
+
+
+        
     </div>
+    
   );
 };
 

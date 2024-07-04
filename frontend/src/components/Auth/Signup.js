@@ -32,7 +32,7 @@ const Signup = () => {
     padding: '20px',
     borderRadius: '10px',
     boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-    backgroundColor: 'white'
+    backgroundcolor: 'black'
   };
 
   const inputStyle = {
@@ -47,7 +47,7 @@ const Signup = () => {
     padding: '10px 20px',
     marginTop: '20px',
     backgroundColor: '#007bff',
-    color: 'white',
+    color: 'black',
     border: 'none',
     borderRadius: '5px',
     cursor: 'pointer',
