@@ -13,9 +13,9 @@ const createUser = async (firstName, lastName, dateOfBirth) => {
 };
 
 // Function to create a faculty member
-const createFaculty = async (firstName, lastName, department) => {
+const createFaculty = async (firstName, lastName, dateOfBirth) => {
   try {
-    const response = await axios.post(`${API_URL}/create-faculty`, { firstName, lastName, department });
+    const response = await axios.post(`${API_URL}/create-faculty`, { firstName, lastName, dateOfBirth });
     return response.data;
   } catch (error) {
     throw error;

@@ -16,6 +16,11 @@ const generateUserId = (firstName, dateOfBirth) => {
   const dobPart = dateOfBirth.split('-')[1] + dateOfBirth.split('-')[2].slice(-2);
   return `${namePart}@${dobPart}`;
 };
+const generateFacultyId = (firstName, dateOfBirth) => {
+  const namePart = firstName.toLowerCase();
+  const dobPart = dateOfBirth.split('-')[1] + dateOfBirth.split('-')[2].slice(-2);
+  return `${namePart}_${dobPart}`;
+};
 
 const generateRandomPassword = (lastName) => {
   const randomDigits = Math.floor(1000 + Math.random() * 9000);
@@ -56,22 +61,22 @@ export const createUser = async (req, res) => {
 };
 
 export const createFaculty = async (req, res) => {
-  const { firstName, lastName, department } = req.body;
+  const { firstName, lastName, dateOfBirth } = req.body;
 
-  if (!firstName || !lastName || !department) {
-    return res.status(400).json({ msg: 'All fields are required' });
+  if (!firstName || !lastName ||  !dateOfBirth) {
+    return res.status(400).json({ msg: 'All fields (firstName, lastName, dateOfBirth) are required' });
   }
 
-  const userId = generateUserId(firstName, new Date().toISOString());
+  const facultyId = generateFacultyId(firstName, dateOfBirth);
   const password = generateRandomPassword(lastName);
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
     const newFaculty = new Faculty({
-      userId,
+      facultyId,
       firstName,
       lastName,
-      department,
+      dateOfBirth,
       password: hashedPassword
     });
 
@@ -79,7 +84,7 @@ export const createFaculty = async (req, res) => {
 
     res.status(201).json({
       msg: 'Faculty created successfully',
-      userId,
+      facultyId,
       password
     });
   } catch (error) {

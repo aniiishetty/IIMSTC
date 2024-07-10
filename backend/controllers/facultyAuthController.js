@@ -13,14 +13,14 @@ export const loginFaculty = async (req, res) => {
 
   try {
     // Find user by userId
-    const faculty = await Faculty.findOne({ userId });
+    const faculty = await Faculty.findOne({ facultyId });
 
     if (!faculty) {
       return res.status(404).json({ msg: 'Faculty not found' });
     }
 
     // Compare passwords
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, faculty.password);
 
     if (!isMatch) {
       return res.status(401).json({ msg: 'Invalid credentials' });

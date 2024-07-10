@@ -150,3 +150,84 @@
         margin-left: 0; /* No margin when sidebar is closed */
     }
 }
+.sidebar {
+    background-color: #2d2d2d;
+    color: white;
+    height: 100vh;
+    overflow: hidden;
+    transition: width 0.1s, display 0.1s;
+  }
+  
+  .top_section {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .bars {
+    display: flex;
+    cursor: pointer;
+  }
+  
+  .search {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    margin-top: 20px;
+  }
+  
+  .search_icon {
+    margin-right: 10px;
+  }
+  
+  .routes {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .link {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-direction: column;
+  }
+  
+  .link:hover {
+    background-color: #1f1f1f;
+  }
+  
+  .icon {
+    font-size: 20px;
+  }
+  
+  .link_text {
+    margin-top: 5px;
+    font-size: 12px;
+    text-align: center;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+  
+  .minimized .link {
+    flex-direction: column; /* Adjust to column layout for minimized state */
+  }
+  
+  .minimized .link_text {
+    opacity: 1; /* Ensure text is visible */
+    font-size: 12px; /* Adjust font size for minimized state */
+  }
+  
+  .maximized .link {
+    flex-direction: row; /* Adjust to row layout for maximized state */
+  }
+  
+  .maximized .link_text {
+    margin-top: 0;
+    font-size: 16px;
+    opacity: 1;
+  }
+  

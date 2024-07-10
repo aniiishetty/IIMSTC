@@ -235,7 +235,7 @@ const Home = () => {
         className={styles.dropdown}
       >
         <option value="admin">Admin Login</option>
-        <option value="signup">Sign Up</option>
+        {/* <option value="signup">Sign Up</option> */}
         <option value="userLogin">User Login</option>
         <option value="facultyLogin">Faculty Login</option>
       </select>

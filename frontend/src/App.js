@@ -6,6 +6,9 @@ import Signup from './components/Auth/Signup';
 import Home from './components/Auth/Home'; // Ensure correct path to Home.js
 import NotFound from './components/Auth/NotFound'; // Ensure correct path to NotFound.js
 import AdminDashboard from './components/Auth/AdminDashboard';
+import FacultyDashboard from './components/Auth/FacultyDashboard';
+
+
 
 import UserLog from './components/Auth/UserLog';
 import TestAttendingMode from './components/Auth/TestAttendingMode';
@@ -20,6 +23,8 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/" element={<Home />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            <Route path="/faculty-dashboard" element={<FacultyDashboard />} />
+
             <Route path="/user-test" element={<TestAttendingMode />} />
             <Route path="/userlogin" element={<UserLog />} />
             <Route path="*" element={<NotFound />} /> {/* Handle unknown routes */}

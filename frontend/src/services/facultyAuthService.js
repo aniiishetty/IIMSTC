@@ -1,6 +1,6 @@
 // src/services/userAuthService.js
 
-const BASE_URL = 'http://localhost:5000/api/users'; // Update with your backend URL
+const BASE_URL = 'http://localhost:5000/api/faculty'; // Update with your backend URL
 
 const FacultyAuthService = {
   login: async (facultyId, password) => {
