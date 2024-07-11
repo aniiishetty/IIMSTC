@@ -10,21 +10,27 @@ import adminRoutes from './routes/adminRoutes.js';
 import userAuthRoutes from './routes/userAuthRoutes.js';
 import testRoutes from './routes/testRoutes.js';
 import facultyRoutes from './routes/facultyRoutes.js';
-//import courseRoutes from './routes/courseRoutes.js'; // Corrected import path
+
 dotenv.config();
 
 const app = express();
 
 // Connect to MongoDB
 connectDB().then(() => {
-  app.use(cors());
+  // CORS configuration
+  app.use(cors({
+    origin: 'http://lmsadmin.s3-website.ap-south-1.amazonaws.com',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }));
+
   app.use(helmet());
   app.use(express.json());
   app.use(morgan('dev'));
 
   const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
   });
   app.use(limiter);
 
@@ -34,7 +40,6 @@ connectDB().then(() => {
   app.use('/api/users', userAuthRoutes);
   app.use('/api/tests', testRoutes);
   app.use('/api/faculty', facultyRoutes);
-  //app.use('/api/courses', courseRoutes); // Corrected route path
 
   const PORT = process.env.PORT || 5000;
 
