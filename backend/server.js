@@ -18,11 +18,7 @@ const app = express();
 // Connect to MongoDB
 connectDB().then(() => {
   // CORS configuration
-  app.use(cors({
-    origin: 'http://lmsadmin.s3-website.ap-south-1.amazonaws.com',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  }));
+  
 
   app.use(helmet());
   app.use(express.json());
