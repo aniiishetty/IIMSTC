@@ -8,7 +8,7 @@ import { PiStudentFill } from "react-icons/pi";
 import { AnimatePresence, motion } from "framer-motion";
 import styled from 'styled-components';
 import styles from '../styles/test.module.css'; // Assuming your CSS file is named test.module.css
-
+import { useNavigate } from 'react-router-dom';
 const MainContent = styled.div`
   flex-grow: 1;
   padding: 20px;
@@ -26,7 +26,7 @@ const TestAttendingMode = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
 
   const webcamRef = useRef(null);
-
+  const navigate = useNavigate();
   const toggle = () => setIsOpen(!isOpen);
 
   const inputAnimation = {
@@ -120,7 +120,7 @@ const TestAttendingMode = () => {
 
       const isCorrect = optionIndex === correctAnswerIndex;
       const resultMessage = isCorrect ? 'Correct answer!' : 'Incorrect answer.';
-
+      
       // Display alert for correct or incorrect answer
       showAlertMessage(resultMessage, isCorrect);
 
@@ -131,7 +131,10 @@ const TestAttendingMode = () => {
       console.log('Question answered:', questionIndex, 'Answer:', optionIndex);
     }
   };
-
+  const handleLogout = () => {
+    // Perform any logout actions here, such as clearing tokens
+    navigate('/'); // Redirect to Home.js or '/'
+  };
   const handleSubmit = () => {
     const score = answers.reduce((total, answer, index) => {
       const correctAnswerIndex = parseInt(test.questions[index].correctAnswer, 10);
@@ -167,6 +170,7 @@ const TestAttendingMode = () => {
             <FaBars onClick={toggle} />
           </div>
         </div>
+        
         <div className={styles.search}>
           <div className={styles.search_icon}>
             <BiSearch />
@@ -257,6 +261,9 @@ const TestAttendingMode = () => {
             </AnimatePresence>
           </div>
         </div>
+        <button className={styles.logoutButton} onClick={handleLogout}>
+            Logout
+          </button>
       </motion.div>
       <MainContent>
         {activeSection === 'dashboard' && (

@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { createUser, createFaculty, createTest, uploadQuestions } from '../../services/adminService';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import styles from '../styles/AdminDashboard.module.css'; // Import CSS module
-
+import { useNavigate } from 'react-router-dom';
 const MainContent = styled.div`
   flex-grow: 1;
   padding: 20px;
@@ -19,7 +19,7 @@ const AdminDashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [copied, setCopied] = useState(false);
-
+  const navigate = useNavigate();
   // Toggle functions
   const toggle = () => setIsOpen(!isOpen);
 
@@ -82,6 +82,11 @@ const AdminDashboard = () => {
       console.error('Error creating user:', error);
     }
   };
+  const handleLogout = () => {
+    // Perform any logout actions here, such as clearing tokens
+    navigate('/'); // Redirect to Home.js or '/'
+  };
+
 
   const handleCreateFaculty = async (e) => {
     e.preventDefault();
@@ -399,9 +404,11 @@ const AdminDashboard = () => {
             Admin
           </motion.h1>
           <div className={styles.bars}>
-            <FaBars onClick={toggle} />
+            <FaBars onClick={toggle} /><br/>
+            
           </div>
         </div>
+        
         <div className={styles.search}>
           <div className={styles.searchIcon}>
             <BiSearch />
@@ -463,6 +470,9 @@ const AdminDashboard = () => {
             </AnimatePresence>
           </div>
         </div>
+        <button className={styles.logoutButton} onClick={handleLogout}>
+            Logout
+          </button>
       </motion.div>
       <MainContent>{renderContent()}</MainContent>
     </div>

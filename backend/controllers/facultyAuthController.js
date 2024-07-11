@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import Faculty from '../models/Faculty.js';
+import Faculty from '../models/Faculty.js'; // Adjust the path to match your model
 
 const generateToken = (facultyId) => {
   return jwt.sign({ facultyId }, process.env.JWT_SECRET, {
@@ -12,7 +12,7 @@ export const loginFaculty = async (req, res) => {
   const { facultyId, password } = req.body;
 
   try {
-    // Find user by userId
+    // Find faculty member by facultyId
     const faculty = await Faculty.findOne({ facultyId });
 
     if (!faculty) {

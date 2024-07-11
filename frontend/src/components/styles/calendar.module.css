@@ -16,7 +16,8 @@
   
   .calendar {
     width: 100%;
-    max-width: 1200px; /* Increased max-width for wider calendar */
+    height: 100%;
+     /* Increased max-width for wider calendar */
     margin: 20px auto;
     border: 1px solid #ccc;
     border-radius: 10px;

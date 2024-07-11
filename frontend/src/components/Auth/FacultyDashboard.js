@@ -10,6 +10,7 @@ import styles from "../styles/Faculty.module.css"; // Main stylesheet for layout
 import CourseForm from './courseForm.js'; // Adjust the path based on your project structure
 import Calendar from 'react-calendar'; // Import react-calendar
 import 'react-calendar/dist/Calendar.css'; // Import react-calendar stylesheet
+import { useNavigate } from 'react-router-dom';
 
 const MainContent = styled.div`
   flex-grow: 1;
@@ -24,6 +25,7 @@ const FacultyDashboard = () => {
   const [publishedCourses, setPublishedCourses] = useState([]);
   const [unpublishedCourses, setUnpublishedCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null); // State for selected course
+  const navigate = useNavigate();
 
   const toggle = () => setIsOpen(!isOpen);
   const toggleForm = () => setIsFormOpen(!isFormOpen); // Function to toggle form visibility
@@ -80,7 +82,10 @@ const FacultyDashboard = () => {
     open: { width: "200px", transition: { duration: 0.1, type: "spring", damping: 10 } },
     closed: { width: "80px", transition: { duration: 0.1, type: "spring", damping: 10 } },
   };
-
+  const handleLogout = () => {
+    // Perform any logout actions here, such as clearing tokens
+    navigate('/'); // Redirect to Home.js or '/'
+  };
   const CourseItem = ({ course, isPublished }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -191,6 +196,7 @@ const FacultyDashboard = () => {
             <FaBars onClick={toggle} />
           </div>
         </div>
+        
         <div className={styles.search}>
           <div className={styles.search_icon}>
             <BiSearch />
@@ -231,6 +237,9 @@ const FacultyDashboard = () => {
             {isOpen && <motion.div className={styles.link_text} variants={showAnimation}>Settings</motion.div>}
           </div>
         </div>
+        <button className={styles.logoutButton} onClick={handleLogout}>
+            Logout
+          </button>
       </motion.div>
       <MainContent>
         {renderContent()}

@@ -10,7 +10,7 @@ import adminRoutes from './routes/adminRoutes.js';
 import userAuthRoutes from './routes/userAuthRoutes.js';
 import testRoutes from './routes/testRoutes.js';
 import facultyRoutes from './routes/facultyRoutes.js';
-import courseRoutes from './routes/courseRoutes.js'; // Corrected import path
+//import courseRoutes from './routes/courseRoutes.js'; // Corrected import path
 dotenv.config();
 
 const app = express();
@@ -34,7 +34,7 @@ connectDB().then(() => {
   app.use('/api/users', userAuthRoutes);
   app.use('/api/tests', testRoutes);
   app.use('/api/faculty', facultyRoutes);
-  app.use('/api/courses', courseRoutes); // Corrected route path
+  //app.use('/api/courses', courseRoutes); // Corrected route path
 
   const PORT = process.env.PORT || 5000;
 

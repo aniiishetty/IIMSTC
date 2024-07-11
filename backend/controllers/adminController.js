@@ -19,7 +19,7 @@ const generateUserId = (firstName, dateOfBirth) => {
 const generateFacultyId = (firstName, dateOfBirth) => {
   const namePart = firstName.toLowerCase();
   const dobPart = dateOfBirth.split('-')[1] + dateOfBirth.split('-')[2].slice(-2);
-  return `${namePart}_${dobPart}`;
+  return `${namePart}@${dobPart}`;
 };
 
 const generateRandomPassword = (lastName) => {

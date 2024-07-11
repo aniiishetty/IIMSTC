@@ -8,6 +8,8 @@ import styles from '../styles/Home.module.css';
 
 const Home = () => {
   const [username, setUsername] = useState('');
+  const [userId, setUserId] = useState('');
+  const [facultyId, setFacultyId] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
@@ -47,7 +49,8 @@ const Home = () => {
     e.preventDefault();
 
     try {
-      await userAuthService.login(username, password);
+      const response = await userAuthService.login(userId, password);
+      console.log(response); // Handle success (e.g., store token)
       navigate('/user-test');
     } catch (error) {
       setError('Invalid credentials. Please try again.');
@@ -58,7 +61,8 @@ const Home = () => {
     e.preventDefault();
 
     try {
-      await facultyAuthService.login(username, password);
+      const response = await facultyAuthService.login(facultyId, password);
+      console.log(response); // Handle success (e.g., store token)
       navigate('/faculty-dashboard');
     } catch (error) {
       setError('Invalid credentials. Please try again.');
@@ -159,8 +163,8 @@ const Home = () => {
             {error && <p className={styles.error}>{error}</p>}
             <input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
               placeholder="User ID"
               required
               className={styles.input}
@@ -192,8 +196,8 @@ const Home = () => {
             {error && <p className={styles.error}>{error}</p>}
             <input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={facultyId}
+              onChange={(e) => setFacultyId(e.target.value)}
               placeholder="Faculty ID"
               required
               className={styles.input}
@@ -212,7 +216,7 @@ const Home = () => {
                 checked={showPassword}
                 onChange={(e) => setShowPassword(e.target.checked)}
               />
-              <label style={{ color: 'black' }}>Show Password</label>
+              <label style={{ color: 'white' }}>Show Password</label>
             </div>
             <button type="submit" className={styles.button}>
               Faculty Login
