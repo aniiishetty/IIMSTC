@@ -9,21 +9,57 @@ import { createUser, createFaculty, createTest, uploadQuestions } from '../../se
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import styles from '../styles/AdminDashboard.module.css'; // Import CSS module
 import { useNavigate } from 'react-router-dom';
+
 const MainContent = styled.div`
   flex-grow: 1;
   padding: 20px;
 `;
+const Sidebar = styled(motion.div)`
+  width: 80px;
+  background-color: #333;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+`;
+
+const Logo = styled(motion.h1)`
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+`;
+
+const Menu = styled.nav`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const MenuItem = styled.a`
+  text-decoration: none;
+  color: #fff;
+  padding: 10px;
+  margin: 5px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #555;
+    border-radius: 5px;
+  }
+`;
+
 
 const AdminDashboard = () => {
-  // State for sidebar
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
-  // Toggle functions
+  
   const toggle = () => setIsOpen(!isOpen);
 
-  // Animation Variants
   const inputAnimation = {
     hidden: { width: 0, padding: 0, transition: { duration: 0.1 } },
     show: { width: "100px", padding: "5px 10px", transition: { duration: 0.1 } },
@@ -39,12 +75,10 @@ const AdminDashboard = () => {
     closed: { width: "80px", transition: { duration: 0.1, type: "spring", damping: 10 } },
   };
 
-  // Section visibility state
   const [showCreateUser, setShowCreateUser] = useState(true);
   const [showCreateFaculty, setShowCreateFaculty] = useState(false);
   const [showCreateTest, setShowCreateTest] = useState(false);
 
-  // State for user creation
   const [userData, setUserData] = useState({
     firstName: '',
     lastName: '',
@@ -52,7 +86,6 @@ const AdminDashboard = () => {
   });
   const [userResponse, setUserResponse] = useState(null);
 
-  // State for faculty creation
   const [facultyData, setFacultyData] = useState({
     firstName: '',
     lastName: '',
@@ -82,11 +115,11 @@ const AdminDashboard = () => {
       console.error('Error creating user:', error);
     }
   };
+
   const handleLogout = () => {
     // Perform any logout actions here, such as clearing tokens
     navigate('/'); // Redirect to Home.js or '/'
   };
-
 
   const handleCreateFaculty = async (e) => {
     e.preventDefault();
@@ -98,26 +131,28 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleChange = (e, qIndex, oIndex) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prevState => {
-      if (qIndex !== undefined) {
-        const questions = [...prevState.questions];
-        if (oIndex !== undefined) {
-          questions[qIndex].options[oIndex] = value;
-        } else if (name === 'correctAnswer') {
-          questions[qIndex][name] = parseInt(value);
-        } else {
-          questions[qIndex][name] = value;
-        }
-        return { ...prevState, questions };
+  const handleQuestionChange = (e, qIndex, oIndex) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => {
+      const questions = [...prevState.questions];
+      if (oIndex !== undefined) {
+        questions[qIndex].options[oIndex] = value; // Handles option input
+      } else {
+        questions[qIndex][name] = value; // Handles question text input
       }
-      return { ...prevState, [name]: type === 'checkbox' ? checked : value };
+      return { ...prevState, questions };
+    });
+  };
+
+  const handleFieldChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prevState) => {
+      return { ...prevState, [name]: type === "checkbox" ? checked : value };
     });
   };
 
   const addQuestion = () => {
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
       questions: [
         ...prevState.questions,
@@ -296,46 +331,48 @@ const AdminDashboard = () => {
     } else if (showCreateTest) {
       return (
         <div className={styles.createContent}>
-         
           <form className={styles.form} onSubmit={handleSubmit}>
-          <h2>Create Test</h2>
+            <h2>Create Test</h2>
             <input
               type="text"
               name="title"
               value={formData.title}
-              onChange={handleChange}
+              onChange={handleFieldChange}
               placeholder="Test Title"
               className={styles.input}
             />
-            {formData.questions.map((q, qIndex) => (
-              <div key={qIndex} className={styles.question}>
+            {formData.questions.map((question, qIndex) => (
+              <div key={qIndex}>
                 <input
                   type="text"
-                  name={`question-${qIndex}`}
-                  value={q.text}
-                  onChange={(e) => handleChange(e, qIndex)}
+                  name="text"
+                  value={question.text}
+                  onChange={(e) => handleQuestionChange(e, qIndex)}
                   placeholder={`Question ${qIndex + 1}`}
                   className={styles.input}
                 />
-                {q.options.map((opt, oIndex) => (
+                {question.options.map((option, oIndex) => (
                   <input
                     key={oIndex}
                     type="text"
-                    name={`option-${qIndex}-${oIndex}`}
-                    value={opt}
-                    onChange={(e) => handleChange(e, qIndex, oIndex)}
+                    value={option}
+                    onChange={(e) => handleQuestionChange(e, qIndex, oIndex)}
                     placeholder={`Option ${oIndex + 1}`}
                     className={styles.input}
                   />
                 ))}
-                <input
-                  type="number"
+                <select
                   name="correctAnswer"
-                  value={q.correctAnswer}
-                  onChange={(e) => handleChange(e, qIndex)}
-                  placeholder="Correct Option Number"
+                  value={question.correctAnswer}
+                  onChange={(e) => handleQuestionChange(e, qIndex)}
                   className={styles.input}
-                />
+                >
+                  {question.options.map((option, oIndex) => (
+                    <option key={oIndex} value={oIndex}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
               </div>
             ))}
             <button type="button" onClick={addQuestion} className={styles.button}>
@@ -346,7 +383,7 @@ const AdminDashboard = () => {
                 type="checkbox"
                 name="noTabSwitch"
                 checked={formData.noTabSwitch}
-                onChange={handleChange}
+                onChange={handleFieldChange}
               />
               No Tab Switch
             </label>
@@ -355,7 +392,7 @@ const AdminDashboard = () => {
                 type="checkbox"
                 name="webcamAccess"
                 checked={formData.webcamAccess}
-                onChange={handleChange}
+                onChange={handleFieldChange}
               />
               Webcam Access
             </label>
@@ -363,28 +400,35 @@ const AdminDashboard = () => {
               type="number"
               name="timeLimit"
               value={formData.timeLimit}
-              onChange={handleChange}
-              placeholder="Time Limit (minutes)"
+              onChange={handleFieldChange}
+              placeholder="Time Limit (in minutes)"
               className={styles.input}
             />
             <button type="submit" className={styles.button}>
               Create Test
             </button>
+            {successMessage && <p>{successMessage}</p>}
+            {testId && (
+              <div>
+                <p>Test ID: {testId}</p>
+                <CopyToClipboard text={testId} onCopy={() => setCopied(true)}>
+                  <button className={styles.button}>
+                    <FaCopy />
+                  </button>
+                </CopyToClipboard>
+                {copied ? <span className={styles.copied}>Copied!</span> : null}
+              </div>
+            )}
           </form>
-          {successMessage && (
-            <div className={styles.successMessage}>{successMessage}</div>
-          )}
-          <div className={styles.uploadQuestions}>
-            {/* <h3>Upload Questions</h3> */}
-            {/* <input type="file" onChange={handleFileUpload} className={styles.input} />
+          <div className={styles.uploadSection}>
+            <h3>Upload Questions from CSV</h3>
+            <input type="file" accept=".csv" onChange={handleFileUpload} className={styles.input} />
             <button onClick={handleUploadQuestions} className={styles.button}>
-              Upload
-            </button> */}
+              Upload Questions
+            </button>
           </div>
         </div>
       );
-    } else {
-      return <div>Select a section</div>;
     }
   };
 
@@ -404,11 +448,12 @@ const AdminDashboard = () => {
             Admin
           </motion.h1>
           <div className={styles.bars}>
-            <FaBars onClick={toggle} /><br/>
+            <FaBars onClick={toggle} />
             
+
           </div>
         </div>
-        
+
         <div className={styles.search}>
           <div className={styles.searchIcon}>
             <BiSearch />
@@ -478,5 +523,4 @@ const AdminDashboard = () => {
     </div>
   );
 };
-
 export default AdminDashboard;
